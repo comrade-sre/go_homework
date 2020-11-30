@@ -21,8 +21,12 @@ func add(x int, y int) int {
 }
 
 func main() {
-	a, _ := strconv.Atoi(os.Args[1])
-	b, _ := strconv.Atoi(os.Args[2])
+	a, a_err := strconv.Atoi(os.Args[1])
+	b, b_err := strconv.Atoi(os.Args[2])
+	if a_err != nil || b_err != nil {
+		fmt.Println(b_err, a_err)
+		os.Exit(2)
+	}
 	switch op := os.Args[3]; op {
 	case "+":
 		fmt.Println(add(a, b))
