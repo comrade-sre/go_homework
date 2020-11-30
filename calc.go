@@ -21,10 +21,10 @@ func add(x int, y int) int {
 }
 
 func main() {
-	a, a_err := strconv.Atoi(os.Args[1])
-	b, b_err := strconv.Atoi(os.Args[2])
-	if a_err != nil || b_err != nil {
-		fmt.Println(b_err, a_err)
+	a, aErr := strconv.Atoi(os.Args[1])
+	b, bErr := strconv.Atoi(os.Args[2])
+	if aErr != nil || bErr != nil {
+		fmt.Println(bErr, aErr)
 		os.Exit(2)
 	}
 	switch op := os.Args[3]; op {
