@@ -10,12 +10,12 @@ import (
 var sep string = ";"
 var s string
 
-func simple_join() {
+func simpleJoin() {
 	// short versiont with the join function
 	s1 := os.Args[1:]
 	fmt.Println(strings.Join(s1, sep))
 }
-func simple_loop() {
+func simpleLoop() {
 	// long verion with the loop
 	arglength := len(os.Args) - 1
 	for i := 1; i <= arglength; i++ {
@@ -27,7 +27,7 @@ func simple_loop() {
 	}
 	fmt.Println(s)
 }
-func simple_range() {
+func simpleRange() {
 	// version with range, index printing  and time measure
 	start := time.Now()
 	for i, arg := range os.Args[1:] {
@@ -38,7 +38,7 @@ func simple_range() {
 }
 
 func main() {
-	simple_join()
-	simple_loop()
-	simple_range()
+	simpleJoin()
+	simpleLoop()
+	simpleRange()
 }
