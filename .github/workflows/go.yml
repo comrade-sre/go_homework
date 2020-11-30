@@ -28,7 +28,7 @@ jobs:
             curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
             dep ensure
         fi
-	- name: build calc
+    - name: build calc
       run: go build -v ./calc.go
     - name: build echo
       run: go build -v ./echo.go
