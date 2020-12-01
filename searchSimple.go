@@ -36,8 +36,8 @@ func main() {
 		os.Exit(1)
 	}
 	num, numErr := strconv.Atoi(os.Args[1])
-	if numErr != nil {
-		fmt.Println(os.Args[1], "is not valid number")
+	if numErr != nil ||  num < 1 {
+		fmt.Println("enter positive number")
 		os.Exit(1)
 	}
 	fmt.Println(search(num))
