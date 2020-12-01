@@ -8,22 +8,22 @@ import (
 
 func search(x int) (result []int) {
 	stack := []int{2}
-	var is_simple bool
+	var isSimple bool
 	if x == 1 {
 		result = append(result, 1)
 		return
 	}
 	for i := 3; i < x; i++ {
 		for _, j := range stack {
-			is_simple = true
+			isSimple = true
 			if i%j == 0 {
 				stack = append(stack, i)
-				is_simple = false
+				isSimple = false
 				break
 			}
 		}
 		stack = append(stack, i)
-		if is_simple {
+		if isSimple {
 			result = append(result, i)
 		}
 	}
