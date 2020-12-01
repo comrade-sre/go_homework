@@ -36,7 +36,7 @@ func main() {
 		os.Exit(1)
 	}
 	num, numErr := strconv.Atoi(os.Args[1])
-	if numErr != nil ||  num < 1 {
+	if numErr != nil || num < 1 {
 		fmt.Println("enter positive number")
 		os.Exit(1)
 	}
