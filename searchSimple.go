@@ -6,25 +6,28 @@ import (
 	"strconv"
 )
 
-func search(x int) []int {
+func search(x int) (result []int) {
 	stack := []int{2}
-	simple := []int{1}
+	var is_simple bool
 	if x == 1 {
-		return simple
+		result = append(result, 1)
+		return
 	}
 	for i := 3; i < x; i++ {
-		for j := range stack {
-			if i%stack[j] == 0 {
+		for _, j := range stack {
+			is_simple = true
+			if i%j == 0 {
 				stack = append(stack, i)
-				break
-			} else {
-				stack = append(stack, i)
-				simple = append(simple, i)
+				is_simple = false
 				break
 			}
 		}
+		stack = append(stack, i)
+		if is_simple {
+			result = append(result, i)
+		}
 	}
-	return simple
+	return result
 }
 
 func main() {
