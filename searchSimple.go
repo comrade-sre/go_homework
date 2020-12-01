@@ -1,4 +1,5 @@
 package main
+
 import (
 	"fmt"
 	"os"
@@ -12,8 +13,8 @@ func search(x int) []int {
 		return simple
 	}
 	for i := 3; i < x; i++ {
-		for j :=  range stack {
-			if i % stack[j] == 0 {
+		for j := range stack {
+			if i%stack[j] == 0 {
 				stack = append(stack, i)
 				break
 			} else {

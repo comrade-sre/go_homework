@@ -32,6 +32,8 @@ jobs:
       run: go build -v ./calc.go
     - name: build echo
       run: go build -v ./echo.go
+    - name: build searchSimple
+      run: go build -v ./searchSimple.go
   super-lint:
     name: Lint source code
     runs-on: ubuntu-latest
