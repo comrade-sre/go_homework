@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"math/rand"
 	"os"
-    "time"
+	"time"
 )
 
 func bubbleSort(s []int) []int {
@@ -46,6 +46,6 @@ func main() {
 
 	start = time.Now()
 	fmt.Println(insertSort(s))
-	duration  = time.Since(start)
+	duration = time.Since(start)
 	fmt.Println("execution time for insert sort", duration.Nanoseconds())
 }
