@@ -7,26 +7,26 @@ import (
 	"time"
 )
 
-func bubbleSort(s []int) []int {
-	for i := 0; i < len(s); i++ {
-		for j := i + 1; j < len(s); j++ {
-			if s[i] > s[j] {
-				s[i], s[j] = s[j], s[i]
+func bubbleSort(sliceToSort []int) []int {
+	for index := 0; index < len(sliceToSort); index++ {
+		for tmpIndex := index + 1; tmpIndex < len(sliceToSort); tmpIndex++ {
+			if sliceToSort[index] > sliceToSort[tmpIndex] {
+				sliceToSort[index], sliceToSort[tmpIndex] = sliceToSort[tmpIndex], sliceToSort[index]
 			}
 		}
 	}
-	return s
+	return sliceToSort
 }
-func insertSort(s []int) []int {
-	for i := 1; i < len(s); i++ {
-		z := s[i]
-		j := i
-		for ; j >= 1 && s[j-1] > z; j-- {
-			s[j] = s[j-1]
+func insertSort(sliceToSort []int) []int {
+	for index := 1; index < len(sliceToSort); index++ {
+		compareValue := sliceToSort[index]
+		tmpIndex := index
+		for ; tmpIndex >= 1 && sliceToSort[tmpIndex-1] > compareValue; tmpIndex-- {
+			sliceToSort[tmpIndex] = sliceToSort[tmpIndex-1]
 		}
-		s[j] = z
+		sliceToSort[tmpIndex] = compareValue
 	}
-	return s
+	return sliceToSort
 }
 
 func main() {
@@ -47,5 +47,5 @@ func main() {
 	start = time.Now()
 	fmt.Println(insertSort(s))
 	duration = time.Since(start)
-	fmt.Println("execution time for insert sort", duration.Nanoseconds())
+	fmt.Println("execution time for insert sorting", duration.Nanoseconds())
 }
