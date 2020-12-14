@@ -7,7 +7,9 @@ import (
 	"strconv"
 	"strings"
 )
-var  calculated = make(map[int]int)
+
+var calculated = make(map[int]int)
+
 func fibonacci(number int) int {
 	if number <= 1 {
 		return number
