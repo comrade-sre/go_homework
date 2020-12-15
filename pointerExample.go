@@ -10,7 +10,7 @@ type Server struct {
 	ram       int
 }
 
-func (s Server) getHostname() string {
+func (s *Server) getHostname() string {
 	return s.hostname
 }
 func (s *Server) setHostname(name string) {
@@ -20,5 +20,7 @@ func (s *Server) setHostname(name string) {
 func main() {
 	instance := new(Server)
 	instance.setHostname("example.local")
-	fmt.Println(instance.getHostname())
+	instance.cpu = 48
+	instance.ram = 256
+	fmt.Println(instance.getHostname(), &instance, *instance)
 }
