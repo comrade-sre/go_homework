@@ -44,6 +44,8 @@ jobs:
       run: go build -v ./calc.go
     - name: check calc
       run: go vet -n -x ./calc.go
+    - name: test
+      run: ls *.go | xargs -I {} go vet -x -n {}
 #  super-lint:
 #    name: Lint source code
 #    runs-on: ubuntu-latest
