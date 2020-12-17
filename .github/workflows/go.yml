@@ -28,10 +28,22 @@ jobs:
             curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
             dep ensure
         fi
+    - name: build sort
+      run: go build -v ./sort.go
+    - name: check sort
+      run: go vet -n -x ./sort.go
+    - name: build searchSimple
+      run: go build -v ./searchSimple.go
+    - name: check searchSimple
+      run: go vet -n -x ./searchSimple.go
+    - name: build fibonacci
+      run: go build -v ./fibonacci.go
+    - name: check fibonacci
+      run: go vet -n -x ./fibonacci.go
     - name: build calc
-      run: ls *.go | while read file; do go build -v ./$file;done
-    - name: lint
-      run: ls *.go | xargs -I {} go vet {}
+      run: go build -v ./calc.go
+    - name: check calc
+      run: go vet -n -x ./calc.go
 #  super-lint:
 #    name: Lint source code
 #    runs-on: ubuntu-latest
