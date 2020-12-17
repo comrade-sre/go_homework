@@ -29,11 +29,7 @@ jobs:
             dep ensure
         fi
     - name: build calc
-      run: go build -v ./calc.go
-    - name: build echo
-      run: go build -v ./echo.go
-    - name: build searchSimple
-      run: go build -v ./searchSimple.go
+      run: ls *.go | while read file; do go build -v ./$file;done
     - name: lint
       run: ls *.go | xargs -I {} go vet {}
 #  super-lint:
