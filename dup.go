@@ -24,9 +24,9 @@ func main() {
 			isFile = printLines(counts, true)
 			if isFile == false {
 				fmt.Printf("in file %s was found duplicates\n", arg)
-				}
+			}
 			f.Close()
-			
+
 		}
 	}
 }
