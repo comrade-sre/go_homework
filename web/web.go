@@ -21,10 +21,7 @@ func main() {
 	log.SetOutput(logFile)
 	log.Println("web server starting")
 	flag.Parse()
-	if flag.NArg() != 1 {
-		log.Fatal("There is incorrect number of arguments, needs file name")
-	}
-	filename := strings.TrimSpace(flag.Arg(0))
+	filename := strings.TrimSpace(*config)
 	if _, err := os.Stat(filename); err != nil {
 		log.Fatalf("Can't check file existing: %v", err)
 	}

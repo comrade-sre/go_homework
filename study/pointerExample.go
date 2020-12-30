@@ -20,6 +20,8 @@ func (s *Server) setHostname(name string) {
 func main() {
 	instance := new(Server)
 	instance.setHostname("example.local")
+	instance.ipAddress = "192.168.1.3"
+	instance.arch = "powerpc"
 	instance.cpu = 48
 	instance.ram = 256
 	fmt.Println(instance.getHostname(), &instance, *instance)
