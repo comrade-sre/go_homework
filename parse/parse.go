@@ -33,6 +33,6 @@ func Parse(f *os.File) {
 	if err != nil {
 		log.Fatalf("error: %v", err)
 	}
-	fmt.Printf("--- t dump:\n%s\n\n", string(d))
+	fmt.Printf("--- config data dump:\n%s\n\n", string(data))
 
 }
