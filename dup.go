@@ -21,11 +21,16 @@ func main() {
 				continue
 			}
 			countLines(f, counts)
+			// isFile flag for understnading, that file was passed to the fuction
 			isFile = printLines(counts, true)
 			if isFile == false {
+				// we set isFile to false again, when we found duplicates in file
 				fmt.Printf("in file %s was found duplicates\n", arg)
 			}
-			f.Close()
+			err = f.Close()
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "there is an error occured while closing file:%v\n")
+			}
 
 		}
 	}
@@ -46,5 +51,8 @@ func countLines(f *os.File, counts map[string]int) {
 	input := bufio.NewScanner(f)
 	for input.Scan() {
 		counts[input.Text()]++
+	}
+	if err := input.Err(); err != nil {
+		fmt.Fprintf(os.Stderr, "reading standart input: %v\n", err)
 	}
 }
