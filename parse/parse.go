@@ -1,9 +1,8 @@
 package parse
 
 import (
-	"fmt"
 	"gopkg.in/yaml.v2"
-	"io/ioutil"
+	"log"
 	"os"
 )
 
@@ -17,17 +16,13 @@ type config struct {
 	SomeAppKey  string `yaml:"some_app_key"`
 }
 
-func Parse(filename string) (config, error) {
-	yamlFile, err := ioutil.ReadFile(filename)
-//	file, err := os.Open(filename)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Can't read file: %v\n", err)
-	}
+func Parse(file *os.File) (config, error) {
 	appConf := config{}
-	//	err = yaml.NewDecoder(file).Decode(&appConf)
-	err = yaml.Unmarshal(yamlFile, &appConf)
+	err := yaml.NewDecoder(file).Decode(&appConf)
 	if err != nil {
-		fmt.Printf("Error parsing YAML file: %s\n", err)
+		log.Fatalf("Error parsing YAML file: %s\n", err)
+	} else {
+		log.Println("Have read configuration file successfully")
 	}
 	return appConf, err
 }

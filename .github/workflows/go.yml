@@ -29,20 +29,19 @@ jobs:
             dep ensure
         fi
     - name: build 
-      run: ls *.go | xargs -I {} go build -v {} 
-    - name: lint
-      run: ls *.go | xargs -I {} go vet -x -n {}
-#  super-lint:
-#    name: Lint source code
-#    runs-on: ubuntu-latest
-#
-#    steps:
-#      - name: Checkout code
-#        uses: actions/checkout@v2
-#
-#      - name: Run Super-Linter
-#        uses: github/super-linter@v3
-#        env:
-#          DEFAULT_BRANCH: main
-#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#          VALIDATE_GO: true
+      run: go build -v web/web.go
+
+  super-lint:
+    name: Lint source code
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Run Super-Linter
+        uses: github/super-linter@v3
+        env:
+          DEFAULT_BRANCH: main
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VALIDATE_GO: true
