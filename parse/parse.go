@@ -1,38 +1,31 @@
 package parse
 
 import (
-	"bufio"
 	"fmt"
 	"gopkg.in/yaml.v2"
+	"io/ioutil"
 	"os"
 )
 
 type config struct {
-	port         int
-	db_url       string
-	jaeger_url   string
-	sentry_url   string
-	kafka_broker string
-	some_app_id  string
-	some_app_key string
+	port         int    `yaml:port`
+	db_url       string `yaml:db_url`
+	jaeger_url   string `yaml:jaeger_url`
+	sentry_url   string `yaml:sentry_url`
+	kafka_broker string `yaml:kafka_broker`
+	some_app_id  string `yaml:some_app_id`
+	some_app_key string `yaml:some_app_key`
 }
 
-func Parse(f *os.File) {
+func Parse(filename string) (config, error) {
+	yamlFile, err := ioutil.ReadFile(filename)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Can't read file: %v\n", err)
+	}
 	appConf := config{}
-	buf := bytes.NewBuffer(make([]byte, 2000))
-	data, err := buf.ReadFrom(f)
+	err = yaml.Unmarshal(yamlFile, &appConf)
 	if err != nil {
-		Fprintf(os.Stderror, "there is an error occured: %v\n", err)
+		fmt.Printf("Error parsing YAML file: %s\n", err)
 	}
-	err = yaml.Unmarshal([]byte(data), &appConf)
-	if err != nil {
-		log.Fatalf("error: %v", err)
-	}
-	fmt.Printf("--- t:\n%v\n\n", appConf)
-	data, err := yaml.Marshal(&appConf)
-	if err != nil {
-		log.Fatalf("error: %v", err)
-	}
-	fmt.Printf("--- config data dump:\n%s\n\n", string(data))
-
+	return appConf, err
 }
