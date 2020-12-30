@@ -29,7 +29,7 @@ jobs:
             dep ensure
         fi
     - name: build 
-      run: go build -v web/web.go -o app
+      run: go build -v -o app web/web.go 
 
   super-lint:
     name: Lint source code
