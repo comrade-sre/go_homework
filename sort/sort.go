@@ -1,4 +1,4 @@
-package main
+package sort
 
 import (
 	"fmt"
@@ -29,23 +29,23 @@ func insertSort(sliceToSort []int) []int {
 	return sliceToSort
 }
 
-func main() {
-	var length int
-	fmt.Print("Enter the length of sequence to sort:")
-	fmt.Fscan(os.Stdin, &length)
-	s := make([]int, length)
-	for i := 0; i < length; i++ {
-		s[i] = rand.Intn(1000) //nolint
-	}
-	fmt.Println(s)
-
-	start := time.Now()
-	fmt.Println(bubbleSort(s))
-	duration := time.Since(start)
-	fmt.Println("execution time fo bubble sorting", duration.Nanoseconds())
-
-	start = time.Now()
-	fmt.Println(insertSort(s))
-	duration = time.Since(start)
-	fmt.Println("execution time for insert sorting", duration.Nanoseconds())
-}
+//func main() {
+//	var length int
+//	fmt.Print("Enter the length of sequence to sort:")
+//	fmt.Fscan(os.Stdin, &length)
+//	s := make([]int, length)
+//	for i := 0; i < length; i++ {
+//		s[i] = rand.Intn(1000) //nolint
+//	}
+//	fmt.Println(s)
+//
+//	start := time.Now()
+//	fmt.Println(bubbleSort(s))
+//	duration := time.Since(start)
+//	fmt.Println("execution time fo bubble sorting", duration.Nanoseconds())
+//
+//	start = time.Now()
+//	fmt.Println(insertSort(s))
+//	duration = time.Since(start)
+//	fmt.Println("execution time for insert sorting", duration.Nanoseconds())
+//}

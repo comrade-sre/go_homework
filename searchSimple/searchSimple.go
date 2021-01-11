@@ -1,4 +1,4 @@
-package main
+package searchSimple
 
 import (
 	"fmt"
@@ -30,15 +30,15 @@ func search(x int) (result []int) {
 	return result
 }
 
-func main() {
-	if len(os.Args) < 2 {
-		fmt.Println("enter the number")
-		os.Exit(1)
-	}
-	num, numErr := strconv.Atoi(os.Args[1])
-	if numErr != nil || num < 1 {
-		fmt.Println("enter positive number")
-		os.Exit(1)
-	}
-	fmt.Println(search(num))
-}
+//func main() {
+//	if len(os.Args) < 2 {
+//		fmt.Println("enter the number")
+//		os.Exit(1)
+//	}
+//	num, numErr := strconv.Atoi(os.Args[1])
+//	if numErr != nil || num < 1 {
+//		fmt.Println("enter positive number")
+//		os.Exit(1)
+//	}
+//	fmt.Println(search(num))
+//}
