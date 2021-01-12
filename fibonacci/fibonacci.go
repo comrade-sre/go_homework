@@ -1,7 +1,5 @@
 package fibonacci
 
-
-
 func Fibonacci(number int) int {
 	var calculated = make(map[int]int)
 	if number <= 1 {

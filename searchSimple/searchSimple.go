@@ -3,7 +3,7 @@ package searchSimple
 func search(x int) (result []int) {
 	stack := []int{2}
 	var isSimple bool
-	if x == 1  {
+	if x == 1 {
 		result = append(result, x)
 		return
 	}
@@ -11,7 +11,7 @@ func search(x int) (result []int) {
 	for i := 3; i < x; i++ {
 		for _, j := range stack {
 			isSimple = true
-			if i%j == 0  {
+			if i%j == 0 {
 				stack = append(stack, i)
 				isSimple = false
 				break
@@ -24,4 +24,3 @@ func search(x int) (result []int) {
 	}
 	return result
 }
-

@@ -31,7 +31,7 @@ func BenchmarkInsert(b *testing.B) {
 		}
 		_ = insertSort(s)
 	}
-	
+
 }
 func BenchmarkBubble(b *testing.B) {
 	for i := 0; i < 10; i++ {
@@ -42,5 +42,5 @@ func BenchmarkBubble(b *testing.B) {
 		}
 		_ = bubbleSort(s)
 	}
-	
+
 }
