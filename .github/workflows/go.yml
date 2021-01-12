@@ -30,6 +30,10 @@ jobs:
         fi
     - name: build 
       run: go build -v -o app web/web.go 
+    - name: test fib
+      run: cd fibonacci/ && go test -v .
+    - name: test search simple
+      run: cd searchSimple/ && go test -v .
 
   super-lint:
     name: Lint source code
