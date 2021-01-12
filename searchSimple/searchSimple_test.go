@@ -3,6 +3,7 @@ package searchSimple
 import (
 	"math/rand"
 	"testing"
+	"fmt"
 )
 
 func TestSimple(t *testing.T) {
@@ -14,4 +15,7 @@ func TestSimple(t *testing.T) {
 	if snums[choice] != result[choice] {
 		t.Errorf("get value %d, wants %d", result[choice], snums[choice])
 	}
+}
+func ExamplesearchSimple() {
+	fmt.Println(search(rand.Intn(1000)))
 }
