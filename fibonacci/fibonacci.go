@@ -9,7 +9,7 @@ func Fibonacci(number int) int {
 	} else if val, ok := calculated[number]; ok {
 		return val
 	} else {
-		result := fibonacci(number-1) + fibonacci(number-2)
+		result := Fibonacci(number-1) + Fibonacci(number-2)
 		calculated[number] = result
 		return result
 	}
