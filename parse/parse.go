@@ -1,10 +1,10 @@
 package parse
 
 import (
-	"gopkg.in/yaml.v2"
-	"os"
 	"fmt"
+	"gopkg.in/yaml.v2"
 	"net/url"
+	"os"
 )
 
 type config struct {
@@ -26,7 +26,7 @@ func Parse(file *os.File) (config, error) {
 	} else {
 		fmt.Println("Have read configuration file successfully")
 	}
-	u, err := url.ParseRequestURI(appConf.SentryURL)		
+	u, err := url.ParseRequestURI(appConf.SentryURL)
 	if err != nil {
 		fmt.Printf("incorrect url in configuration: %s", u)
 		return appConf, err

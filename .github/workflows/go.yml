@@ -34,7 +34,8 @@ jobs:
       run: cd fibonacci/ && go test -v .
     - name: test search simple
       run: cd searchSimple/ && go test -v .
-
+    - name: benchmark for sort
+      run: cd sort/ && go test -v -bench=. -benchmem 
   super-lint:
     name: Lint source code
     runs-on: ubuntu-latest
