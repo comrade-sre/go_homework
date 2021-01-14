@@ -1,12 +1,5 @@
 package sort
 
-//import (
-//	"fmt"
-//	"math/rand" //nolint
-//	"os"
-//	"time"
-//)
-
 func bubbleSort(sliceToSort []int) []int {
 	for index := 0; index < len(sliceToSort); index++ {
 		for tmpIndex := index + 1; tmpIndex < len(sliceToSort); tmpIndex++ {
@@ -28,23 +21,3 @@ func insertSort(sliceToSort []int) []int {
 	}
 	return sliceToSort
 }
-
-//func main() {
-//	var length int
-//	fmt.Print("Enter the length of sequence to sort:")
-//	fmt.Fscan(os.Stdin, &length)
-//	s := make([]int, length)
-//	for i := 0; i < length; i++ {
-//		s[i] = rand.Intn(1000) //nolint
-//	}
-//	start := time.Now()
-//	fmt.Println(s)
-//	fmt.Println(bubbleSort(s))
-//	duration := time.Since(start)
-//	fmt.Println("execution time fo bubble sorting", duration.Nanoseconds())
-//
-//	start = time.Now()
-//	fmt.Println(insertSort(s))
-//	duration = time.Since(start)
-//	fmt.Println("execution time for insert sorting", duration.Nanoseconds())
-//}
