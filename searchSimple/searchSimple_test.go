@@ -1,4 +1,4 @@
-package searchSimple
+package searchsimple
 
 import (
 	"math/rand"

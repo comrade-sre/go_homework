@@ -1,4 +1,4 @@
-package searchSimple
+package searchsimple
 
 func search(x int) (result []int) {
 	stack := []int{2}
