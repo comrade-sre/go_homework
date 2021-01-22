@@ -23,6 +23,7 @@ func TestSort(t *testing.T) {
 
 }
 func BenchmarkInsert(b *testing.B) {
+	b.ReportAllocs()
 	for i := 0; i < 10; i++ {
 		length := rand.Intn(10000)
 		s := make([]int, length)
@@ -34,6 +35,7 @@ func BenchmarkInsert(b *testing.B) {
 
 }
 func BenchmarkBubble(b *testing.B) {
+	b.ReportAllocs()
 	for i := 0; i < 10; i++ {
 		length := rand.Intn(10000)
 		s := make([]int, length)
