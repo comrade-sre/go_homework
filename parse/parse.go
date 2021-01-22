@@ -1,8 +1,9 @@
 package parse
 
 import (
+	"fmt"
 	"gopkg.in/yaml.v2"
-	"log"
+	"net/url"
 	"os"
 )
 
@@ -20,9 +21,20 @@ func Parse(file *os.File) (config, error) {
 	appConf := config{}
 	err := yaml.NewDecoder(file).Decode(&appConf)
 	if err != nil {
-		log.Fatalf("Error parsing YAML file: %s\n", err)
+		fmt.Printf("Error parsing YAML file: %s\n", err)
+		return appConf, err
 	} else {
-		log.Println("Have read configuration file successfully")
+		fmt.Println("Have read configuration file successfully")
+	}
+	u, err := url.ParseRequestURI(appConf.SentryURL)
+	if err != nil {
+		fmt.Printf("incorrect url in configuration: %s", u)
+		return appConf, err
+	}
+	u, err = url.ParseRequestURI(appConf.JaegerURL)
+	if err != nil {
+		fmt.Println("incorrect url in configuration: %s", u)
+		return appConf, err
 	}
 	return appConf, err
 }

@@ -32,18 +32,16 @@ func main() {
 
 	config, err := parse.Parse(configFile)
 	if err != nil {
-		os.Exit(1)
+		log.Fatalf("parsing failed: %v", err)
 	}
 	fmt.Printf("%+v\n", config)
 
-	defer func() {
-		err = logFile.Close()
-		if err != nil {
-			log.Printf("Can't close file: %v", err)
-		}
-		err = configFile.Close()
-		if err != nil {
-			log.Printf("Can't close file: %v", err)
-		}
-	}()
+	err = logFile.Close()
+	if err != nil {
+		log.Printf("Can't close file: %v", err)
+	}
+	err = configFile.Close()
+	if err != nil {
+		log.Printf("Can't close file: %v", err)
+	}
 }

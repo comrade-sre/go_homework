@@ -1,18 +1,13 @@
-package main
-
-import (
-	"fmt"
-	"os"
-	"strconv"
-)
+package searchsimple
 
 func search(x int) (result []int) {
 	stack := []int{2}
 	var isSimple bool
 	if x == 1 {
-		result = append(result, 1)
+		result = append(result, x)
 		return
 	}
+	result = append(result, 2)
 	for i := 3; i < x; i++ {
 		for _, j := range stack {
 			isSimple = true
@@ -28,17 +23,4 @@ func search(x int) (result []int) {
 		}
 	}
 	return result
-}
-
-func main() {
-	if len(os.Args) < 2 {
-		fmt.Println("enter the number")
-		os.Exit(1)
-	}
-	num, numErr := strconv.Atoi(os.Args[1])
-	if numErr != nil || num < 1 {
-		fmt.Println("enter positive number")
-		os.Exit(1)
-	}
-	fmt.Println(search(num))
 }
