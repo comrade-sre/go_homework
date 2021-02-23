@@ -1,10 +1,10 @@
 package main
 
 import (
-	"log"
-	"time"
 	"fmt"
+	"log"
 	"os"
+	"time"
 )
 
 func main() {
@@ -15,16 +15,16 @@ func main() {
 	}
 	defer f.Close()
 	intentPanic()
-	
+
 }
 
 type ErrorDate struct {
 	message string
-	date   string
+	date    string
 }
 
 func NewError(text string) error {
-	return &ErrorDate {
+	return &ErrorDate{
 		message: text,
 		date:    time.Now().Format(time.RFC850),
 	}

@@ -23,7 +23,7 @@ func main() {
 			countLines(f, counts)
 			// isFile flag for understnading, that file was passed to the fuction
 			isFile = printLines(counts, true)
-			if !isFile  {
+			if !isFile {
 				// we set isFile to false again, when we found duplicates in file
 				fmt.Printf("in file %s was found duplicates\n", arg)
 			}
