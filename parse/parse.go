@@ -1,3 +1,4 @@
+// package contains struct and function for work with the yaml configuration
 package parse
 
 import (
@@ -16,7 +17,7 @@ type config struct {
 	SomeAppID   string `yaml:"some_app_id"`
 	SomeAppKey  string `yaml:"some_app_key"`
 }
-
+// function Parse returns struct with all data for  imaginable service configuration
 func Parse(file *os.File) (config, error) {
 	appConf := config{}
 	err := yaml.NewDecoder(file).Decode(&appConf)

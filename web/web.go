@@ -1,3 +1,5 @@
+// Package implements simple exmaple for opening files, also parsing yaml file configuration
+// in addition it's example for logging process in golang, also error processing during file operations
 package main
 
 import (
