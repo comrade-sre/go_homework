@@ -1,4 +1,4 @@
-module github.com/comrade-sre/go_homework/testmodule
+module github.com/comrade-sre/go_homework/testmodule/v2
 
 go 1.15
 
