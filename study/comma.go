@@ -8,10 +8,6 @@ import (
 	"unicode/utf8"
 )
 
-var (
-	buf bytes.Buffer
-)
-
 func main() {
 	if len(os.Args) < 2 {
 		fmt.Fprintf(os.Stderr, "using: script number")
@@ -22,7 +18,7 @@ func main() {
 	fmt.Println(bufComma(os.Args[1]))
 }
 func bufComma(s string) string {
-
+    var buf bytes.Buffer
 	for i, n := range s {
 		tmpBuf := make([]byte, 1)
 		_ = utf8.EncodeRune(tmpBuf, n)
