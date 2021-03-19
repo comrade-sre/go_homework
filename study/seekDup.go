@@ -6,25 +6,18 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
-	"sync"
 )
-
 var (
 	root   = flag.String("d", ".", "define directory for searching duplicates")
+	del = flag.Bool("r", false, "remove all duplicates")
 	paths  = []string{}
 	result = make(map[[32]uint8]string)
-	wg = sync.WaitGroup{}
 )
 
 func main() {
-	var mu sync.RWMutex
 	flag.Parse()
 	getFiles(*root)
-	wg.Add(len(paths))
-	for _, path := range paths {
-		go compareFiles(path, &mu)
-	}
-	wg.Wait()
+	compareFiles(paths, *del)
 }
 func getFiles(root string) (files []os.FileInfo) {
 	files, err := ioutil.ReadDir(root)
@@ -40,21 +33,23 @@ func getFiles(root string) (files []os.FileInfo) {
 	}
 	return
 }
-func compareFiles(path string, mu *sync.RWMutex) {
-	data, err := ioutil.ReadFile(path)
-	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		wg.Done()
-		return
+func compareFiles(s []string, del bool) {
+	for _, path := range paths {
+		data, err := ioutil.ReadFile(path)
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
+		}
+		hash := sha256.Sum256([]byte(data))
+		if _, ok := result[hash]; ok {
+			fmt.Println(path)
+			if del {
+		    err := os.Remove(path)
+		    if err != nil {
+		        fmt.Fprintf(os.Stdout, "cannot delete file %s due to %v", path, err)
+		    }
+		}
+			delete(result, hash)
+		}
+		result[hash] = path
 	}
-	hash := sha256.Sum256([]byte(data))
-    mu.Lock()
-	if _, ok := result[hash]; ok {
-		fmt.Fprintln(os.Stdout, path)
-		delete(result, hash)
-	}
-	result[hash] = path
-	mu.Unlock()
-	wg.Done()
-	return
 }
