@@ -12,10 +12,10 @@ import (
 
 var (
 	root   = flag.String("d", ".", "define directory for searching duplicates")
-	del = flag.Bool("r", false, "remove all duplicates")
+	del    = flag.Bool("r", false, "remove all duplicates")
 	paths  = []string{}
 	result = make(map[[32]uint8]string)
-	wg = sync.WaitGroup{}
+	wg     = sync.WaitGroup{}
 )
 
 func main() {
@@ -28,6 +28,7 @@ func main() {
 	}
 	wg.Wait()
 }
+
 // function GetFiles for getting all files from root directory recursively
 func getFiles(root string) (files []os.FileInfo) {
 	files, err := ioutil.ReadDir(root)
@@ -43,6 +44,7 @@ func getFiles(root string) (files []os.FileInfo) {
 	}
 	return
 }
+
 // function compareFiles function to compare files by sha256summ and print all duplicates except one original file
 func compareFiles(path string, mu *sync.RWMutex, del bool) {
 	data, err := ioutil.ReadFile(path)
@@ -52,14 +54,14 @@ func compareFiles(path string, mu *sync.RWMutex, del bool) {
 		return
 	}
 	hash := sha256.Sum256([]byte(data))
-    mu.Lock()
+	mu.Lock()
 	if _, ok := result[hash]; ok {
 		fmt.Fprintln(os.Stdout, path)
 		if del {
-		    err := os.Remove(path)
-		    if err != nil {
-		        fmt.Fprintf(os.Stdout, "cannot delete file %s due to %v", path, err)
-		    }
+			err := os.Remove(path)
+			if err != nil {
+				fmt.Fprintf(os.Stdout, "cannot delete file %s due to %v", path, err)
+			}
 		}
 		delete(result, hash)
 	}

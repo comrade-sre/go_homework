@@ -7,9 +7,10 @@ import (
 	"io/ioutil"
 	"os"
 )
+
 var (
 	root   = flag.String("d", ".", "define directory for searching duplicates")
-	del = flag.Bool("r", false, "remove all duplicates")
+	del    = flag.Bool("r", false, "remove all duplicates")
 	paths  = []string{}
 	result = make(map[[32]uint8]string)
 )
@@ -43,11 +44,11 @@ func compareFiles(s []string, del bool) {
 		if _, ok := result[hash]; ok {
 			fmt.Println(path)
 			if del {
-		    err := os.Remove(path)
-		    if err != nil {
-		        fmt.Fprintf(os.Stdout, "cannot delete file %s due to %v", path, err)
-		    }
-		}
+				err := os.Remove(path)
+				if err != nil {
+					fmt.Fprintf(os.Stdout, "cannot delete file %s due to %v", path, err)
+				}
+			}
 			delete(result, hash)
 		}
 		result[hash] = path
