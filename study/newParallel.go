@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
-	"runtime/trace"
 	"sync"
 )
 
@@ -14,22 +13,18 @@ var (
 	root   = flag.String("d", ".", "define directory for searching duplicates")
 	paths  = []string{}
 	result = make(map[[32]uint8]string)
+	wg = sync.WaitGroup{}
 )
 
 func main() {
-	trace.Start(os.Stderr)
-	defer trace.Stop()
-	var mu sync.Mutex
+	var mu sync.RWMutex
 	flag.Parse()
 	getFiles(*root)
+	wg.Add(len(paths))
 	for _, path := range paths {
 		go compareFiles(path, &mu)
-
 	}
-	for key, value := range result {
-		fmt.Println("Key:", key, "Value:", value)
-	}
-
+	wg.Wait()
 }
 func getFiles(root string) (files []os.FileInfo) {
 	files, err := ioutil.ReadDir(root)
@@ -45,19 +40,21 @@ func getFiles(root string) (files []os.FileInfo) {
 	}
 	return
 }
-func compareFiles(path string, mu *sync.Mutex) {
+func compareFiles(path string, mu *sync.RWMutex) {
 	data, err := ioutil.ReadFile(path)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
+		wg.Done()
 		return
 	}
 	hash := sha256.Sum256([]byte(data))
-	mu.Lock()
-	defer mu.Unlock()
+    mu.Lock()
 	if _, ok := result[hash]; ok {
-		fmt.Println(path)
+		fmt.Fprintln(os.Stdout, path)
 		delete(result, hash)
 	}
 	result[hash] = path
+	mu.Unlock()
+	wg.Done()
 	return
 }
