@@ -16,6 +16,7 @@ var (
 	paths  = []string{}
 	result = make(map[[32]uint8]string)
 	wg     = sync.WaitGroup{}
+	ch     = make(chan string, 100)
 )
 
 func main() {
@@ -23,7 +24,14 @@ func main() {
 	flag.Parse()
 	getFiles(*root)
 	wg.Add(len(paths))
-	for _, path := range paths {
+	go func() {
+	    for _, path := range paths {
+	        ch <- path
+	    }
+	    close(ch)
+	}()
+
+	for path := range ch {
 		go compareFiles(path, &mu, *del)
 	}
 	wg.Wait()
