@@ -15,6 +15,7 @@ var (
 	del   = flag.Bool("r", false, "remove all duplicates")
 	paths = []string{}
 	wg    = sync.WaitGroup{}
+	ch    = make(chan string, 100)
 )
 
 // Struct for storing file hashes and paths
@@ -28,33 +29,39 @@ func NewSet() *Set {
 		res: make(map[[32]uint8]string),
 	}
 }
-
 func (s *Set) Add(i [32]uint8, path string) {
 	s.Lock()
-	defer s.Unlock()
 	s.res[i] = path
+	s.Unlock()
 }
-
 func (s *Set) Has(i [32]uint8) bool {
 	s.Lock()
-	defer s.Unlock()
 	_, ok := s.res[i]
+	s.Unlock()
 	return ok
 }
 func (s *Set) Del(i [32]uint8) {
 	s.Lock()
-	defer s.Unlock()
 	delete(s.res, i)
+	s.Unlock()
 }
 func main() {
 	flag.Parse()
 	var result = NewSet()
 	GetFiles(*root)
 	wg.Add(len(paths))
-	for _, path := range paths {
+	go func() {
+		for _, path := range paths {
+			ch <- path
+		}
+		close(ch)
+	}()
+
+	for path := range ch {
 		go CompareFiles(path, result, *del)
 	}
 	wg.Wait()
+
 }
 
 // function GetFiles for getting all files from root directory recursively
