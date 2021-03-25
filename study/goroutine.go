@@ -3,23 +3,28 @@ package main
 import (
 	"fmt"
 	"runtime/trace"
-	"sync"
 	"time"
+	"os"
 )
+
+const count = 1000
 
 func main() {
 	trace.Start(os.Stderr)
 	defer trace.Stop()
-
+	var ch = make(chan struct{}, count)
 	var num int
-	var mutex sync.Mutex
-	for i := 0; i < 1000; i++ {
+	for i := 0; i < count; i++ {
 		go func() {
-			mutex.Lock()
 			num++
-			mutex.Unlock()
+			ch <- struct{}{}
 		}()
 	}
-	time.Sleep(3 * time.Second)
-	fmt.Println(num)
+	time.Sleep(2 * time.Second)
+	close(ch)
+	var i int
+	for range ch {
+		i++
+	}
+	fmt.Printf("%d\n%d\n", num, i)
 }
