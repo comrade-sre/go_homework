@@ -49,19 +49,24 @@ func main() {
 	flag.Parse()
 	var result = NewSet()
 	GetFiles(*root)
-	wg.Add(len(paths))
 	go func() {
 		for _, path := range paths {
 			ch <- path
 		}
 		close(ch)
 	}()
-
-	for path := range ch {
-		go CompareFiles(path, result, *del)
+	for i := 0; i < 10; i++ {
+		wg.Add(1)
+		go worker(ch, result)
 	}
 	wg.Wait()
+}
 
+func worker(ch chan string, result *Set) {
+	for path := range ch {
+		CompareFiles(path, result, *del)
+	}
+	wg.Done()
 }
 
 // function GetFiles for getting all files from root directory recursively
@@ -74,9 +79,9 @@ func GetFiles(root string) (files []os.FileInfo) {
 		if file.IsDir() {
 			GetFiles(root + "/" + file.Name())
 		} else if file.Mode().IsRegular() {
-			paths = append(paths, root + "/" + file.Name())
+			paths = append(paths, root+"/"+file.Name())
 		} else {
-		    fmt.Fprintf(os.Stderr, "%s is not a regular file\n", root + "/" + file.Name())
+			fmt.Fprintf(os.Stderr, "%s is not a regular file\n", root+"/"+file.Name())
 		}
 	}
 	return
@@ -87,7 +92,6 @@ func CompareFiles(path string, result *Set, del bool) {
 	data, err := ioutil.ReadFile(path)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
-		wg.Done()
 		return
 	}
 	hash := sha256.Sum256([]byte(data))
@@ -102,6 +106,5 @@ func CompareFiles(path string, result *Set, del bool) {
 		result.Del(hash)
 	}
 	result.Add(hash, path)
-	wg.Done()
 	return
 }
