@@ -21,17 +21,17 @@ var (
 // Struct for storing file hashes and paths
 type Set struct {
 	sync.RWMutex
-	res map[[32]uint8]string
+	res map[[32]uint8][]string
 }
 
 func NewSet() *Set {
 	return &Set{
-		res: make(map[[32]uint8]string),
+		res: make(map[[32]uint8][]string),
 	}
 }
 func (s *Set) Add(i [32]uint8, path string) {
 	s.Lock()
-	s.res[i] = path
+	s.res[i] = append(s.res[i], path)
 	s.Unlock()
 }
 func (s *Set) Has(i [32]uint8) bool {
@@ -41,9 +41,9 @@ func (s *Set) Has(i [32]uint8) bool {
 	return ok
 }
 func (s *Set) Del(i [32]uint8) {
-	s.Lock()
+	//	s.Lock()
 	delete(s.res, i)
-	s.Unlock()
+	//	s.Unlock()
 }
 func main() {
 	flag.Parse()
@@ -60,11 +60,33 @@ func main() {
 		go worker(ch, result)
 	}
 	wg.Wait()
+	deDup(result)
+
 }
 
+// function for deleting duplicates from map
+func deDup(result *Set) {
+	for hash, paths := range result.res {
+		length := len(paths)
+		if length > 1 {
+			for i := 0; i < length-1; i++ {
+				if *del {
+					err := os.Remove(paths[i])
+					if err != nil {
+						fmt.Fprintf(os.Stdout, "cannot delete file %s due to %v\n", paths[i], err)
+					}
+					fmt.Fprintf(os.Stdout, "%s deleted\n", paths[i])
+				} else {
+					fmt.Fprintln(os.Stdout, paths[i])
+				}
+			}
+		}
+		result.Del(hash)
+	}
+}
 func worker(ch chan string, result *Set) {
 	for path := range ch {
-		CompareFiles(path, result, *del)
+		CompareFiles(path, result)
 	}
 	wg.Done()
 }
@@ -87,24 +109,14 @@ func GetFiles(root string) (files []os.FileInfo) {
 	return
 }
 
-// function compareFiles function to compare files by sha256summ and print all duplicates except one original file
-func CompareFiles(path string, result *Set, del bool) {
+// function compareFiles function to compare files by sha256summ and add to result map
+func CompareFiles(path string, result *Set) {
 	data, err := ioutil.ReadFile(path)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		return
 	}
 	hash := sha256.Sum256([]byte(data))
-	if ok := result.Has(hash); ok {
-		fmt.Fprintln(os.Stdout, path)
-		if del {
-			err := os.Remove(path)
-			if err != nil {
-				fmt.Fprintf(os.Stdout, "cannot delete file %s due to %v", path, err)
-			}
-		}
-		result.Del(hash)
-	}
 	result.Add(hash, path)
 	return
 }
