@@ -73,8 +73,10 @@ func GetFiles(root string) (files []os.FileInfo) {
 	for _, file := range files {
 		if file.IsDir() {
 			GetFiles(root + "/" + file.Name())
+		} else if file.Mode().IsRegular() {
+			paths = append(paths, root + "/" + file.Name())
 		} else {
-			paths = append(paths, root+"/"+file.Name())
+		    fmt.Fprintf(os.Stderr, "%s is not a regular file\n", root + "/" + file.Name())
 		}
 	}
 	return
