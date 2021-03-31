@@ -60,6 +60,7 @@ func main() {
 		go worker(ch, result)
 	}
 	wg.Wait()
+	paths = nil
 	deDup(result)
 
 }
