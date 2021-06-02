@@ -5,10 +5,10 @@ import (
 	"crypto/sha256"
 	"flag"
 	"fmt"
+	"go.uber.org/zap"
 	"io/ioutil"
 	"os"
 	"sync"
-	"go.uber.org/zap"
 )
 
 var (
@@ -46,7 +46,7 @@ func (s *Set) Del(i [32]uint8) {
 }
 func main() {
 	flag.Parse()
-	host,_ := os.Hostname()
+	host, _ := os.Hostname()
 	logger, err := NewLogger()
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
@@ -71,11 +71,11 @@ func main() {
 
 }
 func NewLogger() (*zap.Logger, error) {
-  cfg := zap.NewProductionConfig()
-  cfg.OutputPaths = []string{
-    "/Users/andrei.mironov/test/test.log",
-  }
-  return cfg.Build()
+	cfg := zap.NewProductionConfig()
+	cfg.OutputPaths = []string{
+		"/Users/andrei.mironov/test/test.log",
+	}
+	return cfg.Build()
 }
 
 // function for deleting duplicates from map
@@ -113,12 +113,12 @@ func GetFiles(root string, logger *zap.Logger) (files []os.FileInfo) {
 	}
 	for _, file := range files {
 		if file.IsDir() {
-			GetFiles(root + "/" + file.Name(), logger)
+			GetFiles(root+"/"+file.Name(), logger)
 		} else if file.Mode().IsRegular() {
 			paths = append(paths, root+file.Name())
-			logger.With(zap.Uint64("uid", 00001)).Info("file successfully added " + root+file.Name())
+			logger.With(zap.Uint64("uid", 00001)).Info("file successfully added " + root + file.Name())
 		} else {
-			logger.With(zap.Uint64("uid", 00005)).Error("file " + root+file.Name() + " is not a regular file")
+			logger.With(zap.Uint64("uid", 00005)).Error("file " + root + file.Name() + " is not a regular file")
 		}
 	}
 	return
@@ -130,7 +130,7 @@ func CalcHash(path string, result *Set, logger *zap.Logger) {
 	if err != nil {
 		logger.With(zap.Uint64("uid", 00006)).Error("cannot open " + path)
 		return
-	} 
+	}
 	hash := sha256.Sum256([]byte(data))
 	result.Add(hash, path)
 	logger.With(zap.Uint64("uid", 00002)).Info("hash for " + path + " was added")
