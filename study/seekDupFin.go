@@ -52,7 +52,7 @@ func main() {
 		fmt.Fprintln(os.Stderr, err)
 	}
 	defer logger.Sync()
-	logger = logger.With(zap.String("hostname: ", host))
+	logger = logger.With(zap.String("host: ", host))
 	var result = NewSet()
 	GetFiles(*root, logger)
 	go func() {
@@ -108,6 +108,7 @@ func worker(ch chan string, result *Set, logger *zap.Logger) {
 // function GetFiles for getting all files from root directory recursively
 func GetFiles(root string, logger *zap.Logger) (files []os.FileInfo) {
 	files, err := ioutil.ReadDir(root)
+	logger = logger.With(zap.String("path", root))
 	if err != nil {
 		logger.With(zap.Uint64("uid", 00017)).Error(err.Error())
 	}
@@ -115,10 +116,10 @@ func GetFiles(root string, logger *zap.Logger) (files []os.FileInfo) {
 		if file.IsDir() {
 			GetFiles(root+"/"+file.Name(), logger)
 		} else if file.Mode().IsRegular() {
-			paths = append(paths, root+file.Name())
-			logger.With(zap.Uint64("uid", 00001)).Info("file successfully added " + root + file.Name())
+			paths = append(paths, root+"/"+file.Name())
+			logger.With(zap.Uint64("uid", 00001)).Info("file successfully added " + file.Name())
 		} else {
-			logger.With(zap.Uint64("uid", 00005)).Error("file " + root + file.Name() + " is not a regular file")
+			logger.With(zap.Uint64("uid", 00005)).Error("file " + file.Name() + " is not a regular file")
 		}
 	}
 	return
@@ -127,12 +128,13 @@ func GetFiles(root string, logger *zap.Logger) (files []os.FileInfo) {
 // function compareFiles function to compare files by sha256summ and add to result map
 func CalcHash(path string, result *Set, logger *zap.Logger) {
 	data, err := ioutil.ReadFile(path)
+	logger = logger.With(zap.String("path", path))
 	if err != nil {
-		logger.With(zap.Uint64("uid", 00006)).Error("cannot open " + path)
+		logger.With(zap.Uint64("uid", 00006)).Error("cannot open ")
 		return
 	}
 	hash := sha256.Sum256([]byte(data))
 	result.Add(hash, path)
-	logger.With(zap.Uint64("uid", 00002)).Info("hash for " + path + " was added")
+	logger.With(zap.Uint64("uid", 00002)).Info("hash  was added")
 	return
 }
