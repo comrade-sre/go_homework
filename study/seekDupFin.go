@@ -70,10 +70,12 @@ func main() {
 	deDup(result, logger)
 
 }
+
 func NewLogger() (*zap.Logger, error) {
+	LogPath := os.Getenv("HOME") + "/seekdup.log"
 	cfg := zap.NewProductionConfig()
 	cfg.OutputPaths = []string{
-		"/Users/andrei.mironov/test/test.log",
+		LogPath,
 	}
 	return cfg.Build()
 }
