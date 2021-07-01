@@ -1,9 +1,9 @@
 package parse
 
-import 	(
-    "gopkg.in/yaml.v2"
-    "io"
-    )
+import (
+	"gopkg.in/yaml.v2"
+	"io"
+)
 
 type ConfType struct {
 	LOGPATH       string `yaml:"logpath"`
