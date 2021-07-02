@@ -12,7 +12,7 @@ func CheckQueryTypes(IsString map[string]bool, query []string, Querylength int) 
 	    value := i+2
 	    _, err := strconv.ParseFloat(query[value], 32)
 	    if err != nil && !IsHeaderString {
-	        return fmt.Errorf("%s field has a type other than %s, not comparable, beacuse %s", query[i], query[value], IsHeaderString )
+	        return fmt.Errorf("%s field has a type other than %s, not comparable", query[i], query[value])
 	    } else if err == nil && IsHeaderString {
 	        return fmt.Errorf("%s field has a type other than %s, not comparable",query[i], query[value] )
 	    }
@@ -27,10 +27,10 @@ func CheckHeader(header []string, column string) (index int, err error) {
 			return index, nil
 		}
 	}
-	return 0, fmt.Errorf("such column not found: %s", column)
+	return -1, fmt.Errorf("such column not found: %s", column)
 
 }
-func CheckQuerySyntax(header []string, query []string, Querylength int) (err error) {
+func CheckQuerySyntax(header []string, query []string, Querylength int, FieldPos map[string]int) (err error) {
 	HeaderLength := len(header)
 	LogOpMax := HeaderLength - 1
 	QearyMax := (HeaderLength * 3) + LogOpMax
@@ -40,9 +40,11 @@ func CheckQuerySyntax(header []string, query []string, Querylength int) (err err
 
 	}
 	for i := 0; i < Querylength; i += 4 {
-		if _, err = CheckHeader(header, query[i]); err != nil {
+		index, err := CheckHeader(header, query[i])
+		if err != nil {
 			return err
 		}
+		FieldPos[query[i]] = index
 	}
 	for i := 1; i < Querylength; i += 4 {
 		op := query[i]
@@ -57,7 +59,5 @@ func CheckQuerySyntax(header []string, query []string, Querylength int) (err err
 			}
 		}
 	}
-
 	return nil
-
 }
