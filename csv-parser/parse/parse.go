@@ -1,11 +1,12 @@
 package parse
 
 import (
-    "gopkg.in/yaml.v2"
-    "strings"
-    "fmt"
-    "io"
-    "strconv"
+	"fmt"
+	"gopkg.in/yaml.v2"
+	"io"
+	"strconv"
+	"strings"
+
 )
 
 type ConfType struct {
@@ -19,56 +20,51 @@ func Parse(file io.Reader) (appConf ConfType, err error) {
 	err = yaml.NewDecoder(file).Decode(&appConf)
 	return appConf, err
 }
-func CompareValues(first string, second string, op string) (result bool, err error ){
+func CompareValues(first string, second string, op string) (result bool) {
 
-    ffloat, ferr := strconv.ParseFloat(first, 32)
-    sfloat, serr := strconv.ParseFloat(second, 32)
+	ffloat, ferr := strconv.ParseFloat(first, 32)
+	if ferr != nil {
+		switch op {
+		case "=":
+			result = first == second
+			return result
+		case ">":
+			result = first > second
+			return result
+		case "<":
+			result = first < second
+			return result
+		}
 
-    if ferr !=  serr {
-        return false, fmt.Errorf("bad query check, %s and %s not comparable", first, second)
-        } else if ferr == nil {
-            switch op {
-        case "=":
-            result = ffloat == sfloat
-            return result, nil
-        case ">":
-            result = ffloat > sfloat
-            return result, nil
-        case "<":
-            result = ffloat < sfloat
-            return result, nil
-            }
-        } else {
-        switch op {
-        case "=":
-            result = first == second
-            return result, nil
-        case ">":
-            result = first > second
-            return result, nil
-        case "<":
-            result = first < second
-            return result, nil
-        }
-    }
-    return false, fmt.Errorf("we have never should be here!")
+	} else {
+		sfloat, _ := strconv.ParseFloat(second, 32)
+		switch op {
+		case "=":
+			result = ffloat == sfloat
+			return result
+		case ">":
+			result = ffloat > sfloat
+			return result
+		case "<":
+			result = ffloat < sfloat
+			return result
+		}
+
+	}
+	return false
 }
 
-func ParseLine(header []string, query []string, ch <-chan string,  cherr chan error, Querylength int, FieldPos map[string]int) (err error) {
-         BEGIN := 0 //BEGIN < Querylength - 3; BEGIN += 4
-        EXPRESSION := query[BEGIN:BEGIN+3]
-        FIELD := EXPRESSION[0]
-        OP := EXPRESSION[1]
-        VALUE := EXPRESSION[3]
-        for line := range ch {
-            values := strings.Split(line, ",")
-            if res, err := CompareValues(values[FieldPos[FIELD]], VALUE, OP); err != nil {
-                return err
-                } else if res {
-                fmt.Println(line)
-                }
-            }
-        return nil
-
-
+func ParseLine(header []string, query []string, ch <-chan string, Querylength int, FieldPos map[string]int) {
+	//BEGIN := 0 //BEGIN < Querylength - 3; BEGIN += 4
+	EXPRESSION := query //[BEGIN:BEGIN+2]
+	FIELD := EXPRESSION[0]
+	OP := EXPRESSION[1]
+	VALUE := EXPRESSION[2]
+	for line := range ch {
+		values := strings.Split(line, ",")
+		res := CompareValues(values[FieldPos[FIELD]], VALUE, OP)
+		if res {
+			fmt.Println(line)
+		}
+	}
 }

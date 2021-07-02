@@ -12,11 +12,13 @@ import (
 	"os"
 	"strconv"
 	"strings"
-	// "sync"
+	"sync"
 )
+
 const (
-    ReadBuff = 1000
+	ReadBuff = 1000
 )
+
 var (
 	config        = flag.String("c", "./config.yaml", "path to the configuration file")
 	sigChan       = make(chan os.Signal, 1)
@@ -24,9 +26,8 @@ var (
 	IsString      = make(map[string]bool)
 	FirstDataLine []uint8
 	LineChan      = make(chan string, ReadBuff)
-	ReadErrors   = make(chan error, 1)
-	ParseResults  = make(chan error, ReadBuff)
 	FieldPos      = make(map[string]int)
+	wg    = sync.WaitGroup{}
 )
 
 func main() {
@@ -81,22 +82,17 @@ func main() {
 		fmt.Fprintln(os.Stderr, err.Error())
 		os.Exit(1)
 	}
-	go ReadCsv(*reader, LineChan, ReadErrors)
-	go func() {
-		for result := range ReadErrors {
-			if result != nil && result != io.EOF {
-				logger.Error(err.Error())
-				fmt.Fprintln(os.Stderr, err.Error())
-				break
-			}
-		}
-	}()
-	for i := 0; i <= ReadBuff; i++ {
-		 parse.ParseLine(Header, Query, LineChan, ParseResults, Querylength, FieldPos)
+	go ReadCsv(*reader, LineChan, logger)
+	for i := 0; i <= 10; i++ {
+	    wg.Add(1)
+	    go worker(Header, Query, LineChan, Querylength, FieldPos)
 	}
-
+	wg.Wait()
 }
-
+func worker(header []string, query []string, ch <-chan string, Querylength int, FieldPos map[string]int) {
+        parse.ParseLine(header, query, LineChan, Querylength, FieldPos)
+        wg.Done()
+}
 func GetFieldTypes(Header []string, FirstDataLine []string, IsString map[string]bool) {
 	for index, field := range FirstDataLine {
 		_, err := strconv.ParseFloat(field, 32)
@@ -109,17 +105,18 @@ func GetFieldTypes(Header []string, FirstDataLine []string, IsString map[string]
 	return
 }
 
-func ReadCsv(reader bufio.Reader, ch chan string, cherr chan error) {
+func ReadCsv(reader bufio.Reader, ch chan string, logger *zap.Logger) {
 	for {
 		line, _, err := reader.ReadLine()
 		if err == io.EOF {
 			close(ch)
 			break
 		} else if err != nil {
-		    cherr <- err
-		    break
+			logger.Error(err.Error())
+			fmt.Fprintln(os.Stderr, err.Error())
+			close(ch)
+			break
 		}
 		ch <- string(line)
 	}
-	close(cherr)
 }

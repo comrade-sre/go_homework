@@ -2,24 +2,23 @@ package check
 
 import (
 	"fmt"
-	"strings"
 	"strconv"
+	"strings"
 )
 
 func CheckQueryTypes(IsString map[string]bool, query []string, Querylength int) (err error) {
 	for i := 0; i < Querylength; i += 4 {
-	    IsHeaderString := IsString[query[i]]
-	    value := i+2
-	    _, err := strconv.ParseFloat(query[value], 32)
-	    if err != nil && !IsHeaderString {
-	        return fmt.Errorf("%s field has a type other than %s, not comparable", query[i], query[value])
-	    } else if err == nil && IsHeaderString {
-	        return fmt.Errorf("%s field has a type other than %s, not comparable",query[i], query[value] )
-	    }
-    }
-    return nil
+		IsHeaderString := IsString[query[i]]
+		value := i + 2
+		_, err := strconv.ParseFloat(query[value], 32)
+		if err != nil && !IsHeaderString {
+			return fmt.Errorf("%s field has a type other than %s, not comparable", query[i], query[value])
+		} else if err == nil && IsHeaderString {
+			return fmt.Errorf("%s field has a type other than %s, not comparable", query[i], query[value])
+		}
+	}
+	return nil
 }
-
 
 func CheckHeader(header []string, column string) (index int, err error) {
 	for index, value := range header {
