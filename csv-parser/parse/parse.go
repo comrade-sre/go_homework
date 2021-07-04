@@ -2,11 +2,11 @@ package parse
 
 import (
 	"fmt"
+	"github.com/comrade-sre/go_homework/csv-parser/check"
 	"gopkg.in/yaml.v2"
 	"io"
 	"strconv"
 	"strings"
-
 )
 
 type ConfType struct {
@@ -21,22 +21,25 @@ func Parse(file io.Reader) (appConf ConfType, err error) {
 	return appConf, err
 }
 func CompareValues(first string, second string, op string) (result bool) {
-
-	ffloat, ferr := strconv.ParseFloat(first, 32)
-	if ferr != nil {
-		switch op {
-		case "=":
-			result = first == second
-			return result
-		case ">":
-			result = first > second
-			return result
-		case "<":
-			result = first < second
-			return result
+	if check.ValidTime.MatchString(strings.Trim(first, " ")) {
+		ftime, err := check.ConvertTime(first)
+		if err == nil {
+			stime, _ := check.ConvertTime(second)
+			switch op {
+			case "=":
+				result = ftime == stime
+				return result
+			case ">":
+				result = ftime.After(stime)
+				return result
+			case "<":
+				result = ftime.Before(stime)
+				return result
+			}
 		}
-
-	} else {
+	}
+	ffloat, err := strconv.ParseFloat(first, 32)
+	if err == nil {
 		sfloat, _ := strconv.ParseFloat(second, 32)
 		switch op {
 		case "=":
@@ -47,6 +50,18 @@ func CompareValues(first string, second string, op string) (result bool) {
 			return result
 		case "<":
 			result = ffloat < sfloat
+			return result
+		}
+	} else {
+		switch op {
+		case "=":
+			result = first == second
+			return result
+		case ">":
+			result = first > second
+			return result
+		case "<":
+			result = first < second
 			return result
 		}
 
