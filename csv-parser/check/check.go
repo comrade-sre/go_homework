@@ -14,28 +14,21 @@ var (
 )
 
 func ConvertTime(value string) (time.Time, error) {
-	Months := map[string]string{"01": "Jan", "02": "Feb", "03": "Mar", "04": "Apr", "05": "May",
-		"06": "Jun", "07": "Jul", "08": "Aug", "09": "Sep", "10": "Oct",
-		"11": "Nov", "12": "Dec"}
-	var reversValue strings.Builder
-	reversValue.Grow(32)
-	const shortForm = "2006-Jan-02"
+	shortFormat := "01/02/2006"
+	var newValue strings.Builder
+	newValue.Grow(32)
 	splitValue := strings.Split(value, "/")
-	fmt.Fprintf(&reversValue, "%s-", splitValue[2])
-	if utf8.RuneCountInString(splitValue[1]) == 1 {
-		splitValue[1] = "0" + splitValue[1]
-	}
-	splitValue[0] = Months[splitValue[0]]
-	fmt.Fprintf(&reversValue, "%s-", splitValue[0])
 	if utf8.RuneCountInString(splitValue[0]) == 1 {
 		splitValue[0] = "0" + splitValue[0]
 	}
-	fmt.Fprintf(&reversValue, "%s", splitValue[1])
-	date, err := time.Parse(shortForm, reversValue.String())
-	if err != nil {
-		return time.Now(), err
+	fmt.Fprintf(&newValue, "%s/", splitValue[0])
+	if utf8.RuneCountInString(splitValue[1]) == 1 {
+		splitValue[1] = "0" + splitValue[1]
 	}
-	return date, nil
+	fmt.Fprintf(&newValue, "%s/", splitValue[1])
+	fmt.Fprintf(&newValue, "%s", splitValue[2])
+	date, err := time.Parse(shortFormat, newValue.String())
+	return date, err
 
 }
 
@@ -54,7 +47,6 @@ func CheckQueryTypes(IsString map[string]bool, query []string, Querylength int) 
 				return err
 			}
 		}
-
 	}
 	return nil
 }

@@ -5,11 +5,10 @@ import (
 )
 
 func main () {
-	//loc, _ := time.LoadLocation("Europe/Moscow")
-	const shortForm = "2006-Jan-02"
-	t, _ = time.ParseInLocation(shortForm, "2012-Jul-09")
-	fmt.Println(t)	
 	
+	const shortForm = "2006-01-02"
+	_, err := time.Parse(shortForm, "2001-09-11")
+	fmt.Println(err)
 
 }
 

@@ -27,7 +27,7 @@ var (
 	FirstDataLine []uint8
 	LineChan      = make(chan string, ReadBuff)
 	FieldPos      = make(map[string]int)
-	wg    = sync.WaitGroup{}
+	wg            = sync.WaitGroup{}
 )
 
 func main() {
@@ -84,14 +84,14 @@ func main() {
 	}
 	go ReadCsv(*reader, LineChan, logger)
 	for i := 0; i <= 10; i++ {
-	    wg.Add(1)
-	    go worker(Header, Query, LineChan, Querylength, FieldPos)
+		wg.Add(1)
+		go worker(Header, Query, LineChan, Querylength, FieldPos)
 	}
 	wg.Wait()
 }
 func worker(header []string, query []string, ch <-chan string, Querylength int, FieldPos map[string]int) {
-        parse.ParseLine(header, query, LineChan, Querylength, FieldPos)
-        wg.Done()
+	parse.ParseLine(header, query, LineChan, Querylength, FieldPos)
+	wg.Done()
 }
 func GetFieldTypes(Header []string, FirstDataLine []string, IsString map[string]bool) {
 	for index, field := range FirstDataLine {
