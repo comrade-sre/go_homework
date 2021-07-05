@@ -7,12 +7,11 @@ import (
 	"io"
 	"strconv"
 	"strings"
-	"go.uber.org/zap"
 )
 
 type ConfType struct {
 	LOGPATH       string `yaml:"logpath"`
-	LOGERR        string  `yaml:"logerrpath"`
+	LOGERR        string `yaml:"logerrpath"`
 	CSVPATH       string `yaml:"csvpath"`
 	SEARCHTIMEOUT int    `yaml:"timeout"`
 }
@@ -71,16 +70,18 @@ func CompareValues(first string, second string, op string) (result bool) {
 	return false
 }
 
-func ParseLine(header []string, Query []string, ch <-chan string, Querylength int, FieldPos map[string]int, logger *zap.Logger) (error) {
-	
-	FIELD := Query[0]
-	OP := Query[1]
-	VALUE := Query[2]
+func ParseLine(header []string, Query []string, ch <-chan string, Querylength int, FieldPos map[string]int) error {
+
 	for line := range ch {
-		values := strings.Split(line, ",")
-		res := CompareValues(values[FieldPos[FIELD]], VALUE, OP)
-		if res {
-			fmt.Println(line)
+	    values := strings.Split(line, ",")
+		for BeginExpression := 0; BeginExpression <= Querylength-3; BeginExpression += 4 {
+			FIELD := Query[BeginExpression]
+			OP := Query[BeginExpression+1]
+			VALUE := Query[BeginExpression+2]
+			res := CompareValues(values[FieldPos[FIELD]], VALUE, OP)
+			if res {
+				fmt.Println(line)
+			}
 		}
 	}
 	return nil

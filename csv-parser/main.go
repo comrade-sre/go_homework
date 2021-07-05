@@ -93,15 +93,12 @@ func main() {
 	go ReadCsv(*reader, LineChan, logger)
 	for i := 0; i <= 10; i++ {
 		wg.Add(1)
-		go worker(Header, Query, LineChan, Querylength, FieldPos, loggerErr)
+		go worker(Header, Query, LineChan, Querylength, FieldPos)
 	}
 	wg.Wait()
 }
-func worker(Header []string, Query []string, ch <-chan string, Querylength int, FieldPos map[string]int, logger *zap.Logger) {
-	err := parse.ParseLine(Header, Query, LineChan, Querylength, FieldPos, logger)
-	if err != nil {
-	   logger.Error(err.Error())
-	}
+func worker(Header []string, Query []string, ch <-chan string, Querylength int, FieldPos map[string]int) {
+	parse.ParseLine(Header, Query, LineChan, Querylength, FieldPos)
 	wg.Done()
 }
 func GetFieldTypes(Header []string, FirstDataLine []string, IsString map[string]bool) {
