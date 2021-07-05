@@ -59,8 +59,8 @@ func main() {
 	reader := bufio.NewReader(csv)
 	RawHeader, _, err := reader.ReadLine()
 	if err != nil {
-		logger.With(zap.String("Cannot retrieve  header from csv %s", config.CSVPATH)).Error(err.Error())
-		fmt.Fprintln(os.Stderr, "Cannot retrieve  header from csv")
+		logger.With(zap.String("Cannot retrieve  Header from csv %s", config.CSVPATH)).Error(err.Error())
+		fmt.Fprintln(os.Stderr, "Cannot retrieve  Header from csv")
 		os.Exit(1)
 	}
 	FirstDataLineRaw, _, err := reader.ReadLine()
@@ -89,8 +89,8 @@ func main() {
 	}
 	wg.Wait()
 }
-func worker(header []string, query []string, ch <-chan string, Querylength int, FieldPos map[string]int) {
-	parse.ParseLine(header, query, LineChan, Querylength, FieldPos)
+func worker(Header []string, Query []string, ch <-chan string, Querylength int, FieldPos map[string]int) {
+	parse.ParseLine(Header, Query, LineChan, Querylength, FieldPos)
 	wg.Done()
 }
 func GetFieldTypes(Header []string, FirstDataLine []string, IsString map[string]bool) {

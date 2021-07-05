@@ -69,12 +69,11 @@ func CompareValues(first string, second string, op string) (result bool) {
 	return false
 }
 
-func ParseLine(header []string, query []string, ch <-chan string, Querylength int, FieldPos map[string]int) {
-	//BEGIN := 0 //BEGIN < Querylength - 3; BEGIN += 4
-	EXPRESSION := query //[BEGIN:BEGIN+2]
-	FIELD := EXPRESSION[0]
-	OP := EXPRESSION[1]
-	VALUE := EXPRESSION[2]
+func ParseLine(header []string, Query []string, ch <-chan string, Querylength int, FieldPos map[string]int) {
+	
+	FIELD := Query[0]
+	OP := Query[1]
+	VALUE := Query[2]
 	for line := range ch {
 		values := strings.Split(line, ",")
 		res := CompareValues(values[FieldPos[FIELD]], VALUE, OP)
