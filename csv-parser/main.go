@@ -47,25 +47,31 @@ func main() {
 	logger, err := log.NewLogger(config.LOGPATH)
 	defer logger.Sync()
 	if err != nil {
+	    fmt.Fprintf(os.Stderr, "%s", err.Error())
+	}
+	loggerErr, err := log.NewLogger(config.LOGERR)
+		if err != nil {
 		panic(err.Error())
 	}
+	defer loggerErr.Sync()
+	logger.Info("Query " + strings.Join(Query, " ") + " received")
 	fmt.Println(os.Args[0])
 	csv, err := os.Open(config.CSVPATH)
 	defer csv.Close()
 	if err != nil {
-		logger.Error(err.Error())
+		loggerErr.Error(err.Error())
 		panic(err.Error())
 	}
 	reader := bufio.NewReader(csv)
 	RawHeader, _, err := reader.ReadLine()
 	if err != nil {
-		logger.With(zap.String("Cannot retrieve  Header from csv %s", config.CSVPATH)).Error(err.Error())
+		loggerErr.With(zap.String("Cannot retrieve  Header from csv %s", config.CSVPATH)).Error(err.Error())
 		fmt.Fprintln(os.Stderr, "Cannot retrieve  Header from csv")
 		os.Exit(1)
 	}
 	FirstDataLineRaw, _, err := reader.ReadLine()
 	if err != nil {
-		logger.With(zap.String("Cannot retrieve first data line from csv %s", config.CSVPATH)).Error(err.Error())
+		loggerErr.With(zap.String("Cannot retrieve first data line from csv %s", config.CSVPATH)).Error(err.Error())
 		fmt.Fprintln(os.Stderr, "Cannot retrieve first data line from csv")
 		os.Exit(1)
 	}
@@ -73,24 +79,29 @@ func main() {
 	FirstDataLine := strings.Split(string(FirstDataLineRaw), ",")
 	GetFieldTypes(Header, FirstDataLine, IsString)
 	if err = check.CheckQuerySyntax(Header, Query, Querylength, FieldPos); err != nil {
-		logger.Error(err.Error())
+		loggerErr.Error(err.Error())
 		fmt.Fprintln(os.Stderr, err.Error())
 		os.Exit(1)
 	}
 	if err = check.CheckQueryTypes(IsString, Query, Querylength); err != nil {
-		logger.Error(err.Error())
+		loggerErr.Error(err.Error())
 		fmt.Fprintln(os.Stderr, err.Error())
 		os.Exit(1)
 	}
+	logger.Info("Query " + strings.Join(Query, " ") + " checked, start  searching")
+	LineChan <- string(FirstDataLineRaw)
 	go ReadCsv(*reader, LineChan, logger)
 	for i := 0; i <= 10; i++ {
 		wg.Add(1)
-		go worker(Header, Query, LineChan, Querylength, FieldPos)
+		go worker(Header, Query, LineChan, Querylength, FieldPos, loggerErr)
 	}
 	wg.Wait()
 }
-func worker(Header []string, Query []string, ch <-chan string, Querylength int, FieldPos map[string]int) {
-	parse.ParseLine(Header, Query, LineChan, Querylength, FieldPos)
+func worker(Header []string, Query []string, ch <-chan string, Querylength int, FieldPos map[string]int, logger *zap.Logger) {
+	err := parse.ParseLine(Header, Query, LineChan, Querylength, FieldPos, logger)
+	if err != nil {
+	   logger.Error(err.Error())
+	}
 	wg.Done()
 }
 func GetFieldTypes(Header []string, FirstDataLine []string, IsString map[string]bool) {
