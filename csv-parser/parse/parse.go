@@ -73,13 +73,21 @@ func CompareValues(first string, second string, op string) (result bool) {
 func ParseLine(header []string, Query []string, ch <-chan string, Querylength int, FieldPos map[string]int) error {
 
 	for line := range ch {
-	    values := strings.Split(line, ",")
+		values := strings.Split(line, ",")
 		for BeginExpression := 0; BeginExpression <= Querylength-3; BeginExpression += 4 {
 			FIELD := Query[BeginExpression]
 			OP := Query[BeginExpression+1]
 			VALUE := Query[BeginExpression+2]
-			res := CompareValues(values[FieldPos[FIELD]], VALUE, OP)
-			if res {
+			RES := CompareValues(values[FieldPos[FIELD]], VALUE, OP)
+			if BeginExpression < Querylength-3 {
+				LOGOP := strings.ToLower(Query[BeginExpression+3])
+				if LOGOP == "and" && !RES {
+					break
+				} else if LOGOP == "and" && RES {
+					continue
+				}
+			}
+			if RES {
 				fmt.Println(line)
 			}
 		}

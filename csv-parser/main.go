@@ -47,10 +47,10 @@ func main() {
 	logger, err := log.NewLogger(config.LOGPATH)
 	defer logger.Sync()
 	if err != nil {
-	    fmt.Fprintf(os.Stderr, "%s", err.Error())
+		fmt.Fprintf(os.Stderr, "%s", err.Error())
 	}
 	loggerErr, err := log.NewLogger(config.LOGERR)
-		if err != nil {
+	if err != nil {
 		panic(err.Error())
 	}
 	defer loggerErr.Sync()
