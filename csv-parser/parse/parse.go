@@ -70,7 +70,7 @@ func CompareValues(first string, second string, op string) (result bool) {
 	return false
 }
 
-func ParseLine(header []string, Query []string, ch <-chan string, Querylength int, FieldPos map[string]int) error {
+func ParseLine(header []string, Query []string, ch <-chan string, Querylength int, FieldPos map[string]int)  {
 
 	for line := range ch {
 		values := strings.Split(line, ",")
@@ -92,5 +92,4 @@ func ParseLine(header []string, Query []string, ch <-chan string, Querylength in
 			}
 		}
 	}
-	return nil
 }
