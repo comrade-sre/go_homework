@@ -75,10 +75,10 @@ func ParseLine(header []string, Query []string, ch <-chan string, Querylength in
 	for line := range ch {
 		values := strings.Split(line, ",")
 		for BeginExpression := 0; BeginExpression <= Querylength-3; BeginExpression += 4 {
-			FIELD := Query[BeginExpression]
+			FIELD := strings.ToLower(values[FieldPos[Query[BeginExpression]]])
 			OP := Query[BeginExpression+1]
-			VALUE := Query[BeginExpression+2]
-			RES := CompareValues(values[FieldPos[FIELD]], VALUE, OP)
+			VALUE := strings.ToLower(Query[BeginExpression+2])
+			RES := CompareValues(FIELD, VALUE, OP)
 			if BeginExpression < Querylength-3 {
 				LOGOP := strings.ToLower(Query[BeginExpression+3])
 				if LOGOP == "and" && !RES {
