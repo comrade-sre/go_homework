@@ -28,7 +28,7 @@ func RandStringRunes(n int) string {
 }
 
 func TestCompareValues(t *testing.T) {
-    rand.Seed(time.Now().UnixNano())
+	rand.Seed(time.Now().UnixNano())
 	for step := 0; step <= TestLength; step++ {
 		wg.Add(1)
 		go func() {
