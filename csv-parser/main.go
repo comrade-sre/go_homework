@@ -118,22 +118,21 @@ func GetFieldTypes(Header []string, FirstDataLine []string, IsString map[string]
 }
 
 func ReadCsv(reader bufio.Reader, ch chan string, logger *zap.Logger, ctx context.Context) {
+	defer close(ch)
 	for {
 		select {
 		case <-ctx.Done():
-			close(ch)
+
 			return
 		default:
 		}
 		line, _, err := reader.ReadLine()
 		if err == io.EOF {
-			close(ch)
-			break
+			return
 		} else if err != nil {
 			logger.Error(err.Error())
 			fmt.Fprintln(os.Stderr, err.Error())
-			close(ch)
-			break
+			return
 		}
 		ch <- string(line)
 	}
