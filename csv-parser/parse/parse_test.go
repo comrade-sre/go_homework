@@ -1,11 +1,11 @@
 package parse
 
 import (
+	"fmt"
 	"math/rand"
 	"sync"
 	"testing"
 	"time"
-	"fmt"
 )
 
 const (
@@ -45,11 +45,11 @@ func TestCompareValues(t *testing.T) {
 			}
 			resString := CompareValues(string(a), string(b), "=")
 			resInt := CompareValues(c, d, "=")
-			if resString == true  {
+			if resString == true {
 				t.Errorf("gets true, wants false, values: %s = %s", string(a), string(b))
 			}
 			if resInt == true {
-			    t.Errorf("gets true, wants false, values: %s = %s", c, d)
+				t.Errorf("gets true, wants false, values: %s = %s", c, d)
 			}
 			wg.Done()
 		}()
