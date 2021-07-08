@@ -33,7 +33,7 @@ jobs:
     - name: test
       run: cd csv-parser/ && go test -v . && go test -v parse/*
     - name: vet
-      run: find csv-parser/  -iname "*.go" | xargs -I {} go vet {}
+      run: cd csv-parser/ && find .  -iname "*.go" | xargs -I {} go vet {}
   super-lint:
     name: Lint source code
     runs-on: ubuntu-latest
