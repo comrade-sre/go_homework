@@ -43,8 +43,11 @@ func TestCompareValues(t *testing.T) {
 			for index := range a {
 				a[index] = letterRunes[rand.Intn(len(letterRunes))]
 			}
+
 			resString := CompareValues(string(a), string(b), "=")
+			t.Logf("testing string values: %s = %s", string(a), string(b))
 			resInt := CompareValues(c, d, "=")
+			t.Logf("testing string values: %s = %s", c, d)
 			if resString == true {
 				t.Errorf("gets true, wants false, values: %s = %s", string(a), string(b))
 			}
