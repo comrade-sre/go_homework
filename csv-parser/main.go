@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"context"
 	"flag"
 	"fmt"
 	"github.com/comrade-sre/go_homework/csv-parser/check"
@@ -12,9 +13,8 @@ import (
 	"os"
 	"strconv"
 	"strings"
-	"time"
 	"sync"
-	"context"
+	"time"
 )
 
 const (
@@ -23,7 +23,6 @@ const (
 
 var (
 	config        = flag.String("c", "./config.yaml", "path to the configuration file")
-	sigChan       = make(chan os.Signal, 1)
 	Header        []string
 	IsString      = make(map[string]bool)
 	FirstDataLine []uint8
@@ -65,7 +64,7 @@ func main() {
 		loggerErr.Error(err.Error())
 		panic(err.Error())
 	}
-	ctx, cancel := context.WithTimeout(ctx, 1 * time.Second) //time.Duration(config.SEARCHTIMEOUT)
+	ctx, cancel := context.WithTimeout(ctx, time.Duration(config.SEARCHTIMEOUT)*time.Second)
 	defer cancel()
 	reader := bufio.NewReader(csv)
 	RawHeader, _, err := reader.ReadLine()
@@ -120,6 +119,12 @@ func GetFieldTypes(Header []string, FirstDataLine []string, IsString map[string]
 
 func ReadCsv(reader bufio.Reader, ch chan string, logger *zap.Logger, ctx context.Context) {
 	for {
+		select {
+		case <-ctx.Done():
+			close(ch)
+			return
+		default:
+		}
 		line, _, err := reader.ReadLine()
 		if err == io.EOF {
 			close(ch)
@@ -132,5 +137,4 @@ func ReadCsv(reader bufio.Reader, ch chan string, logger *zap.Logger, ctx contex
 		}
 		ch <- string(line)
 	}
-	ctx.Done()
 }

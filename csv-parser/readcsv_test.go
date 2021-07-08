@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"bytes"
+	"context"
 	"fmt"
 	"go.uber.org/zap"
 	"math/rand"
@@ -37,6 +38,8 @@ func RandBytes(n int) []byte {
 	return b
 }
 func TestReadCsv(t *testing.T) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
 	rand.Seed(time.Now().UnixNano())
 	logger, _ := zap.NewProduction()
 	defer logger.Sync()
@@ -45,7 +48,7 @@ func TestReadCsv(t *testing.T) {
 	PrintMemUsage()
 	buf := bytes.NewBuffer(data)
 	reader := bufio.NewReader(buf)
-	go ReadCsv(*reader, ch, logger)
+	go ReadCsv(*reader, ch, logger, ctx)
 	var i int
 	for res := range ch {
 		i++
