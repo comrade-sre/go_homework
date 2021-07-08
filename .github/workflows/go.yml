@@ -29,9 +29,9 @@ jobs:
             dep ensure
         fi
     - name: build 
-      run: go build -v -o app csv-parser/main.go 
+      run: cd csv-parser/ && go build -v -o app main.go
     - name: test
-      run: go test -v -bench=. -benchmem 
+      run: cd csv-parser/ && go test -v . && go test -v parse/*
   super-lint:
     name: Lint source code
     runs-on: ubuntu-latest
