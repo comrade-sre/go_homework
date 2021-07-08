@@ -12,7 +12,9 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
 	"sync"
+	"context"
 )
 
 const (
@@ -28,6 +30,7 @@ var (
 	LineChan      = make(chan string, ReadBuff)
 	FieldPos      = make(map[string]int)
 	wg            = sync.WaitGroup{}
+	ctx           = context.Background()
 )
 
 func main() {
@@ -62,6 +65,8 @@ func main() {
 		loggerErr.Error(err.Error())
 		panic(err.Error())
 	}
+	ctx, cancel := context.WithTimeout(ctx, 1 * time.Second) //time.Duration(config.SEARCHTIMEOUT)
+	defer cancel()
 	reader := bufio.NewReader(csv)
 	RawHeader, _, err := reader.ReadLine()
 	if err != nil {
@@ -90,7 +95,7 @@ func main() {
 	}
 	logger.Info("Query " + strings.Join(Query, " ") + " checked, start  searching")
 	LineChan <- string(FirstDataLineRaw)
-	go ReadCsv(*reader, LineChan, logger)
+	go ReadCsv(*reader, LineChan, logger, ctx)
 	for i := 0; i <= 10; i++ {
 		wg.Add(1)
 		go worker(Header, Query, LineChan, Querylength, FieldPos)
@@ -113,7 +118,7 @@ func GetFieldTypes(Header []string, FirstDataLine []string, IsString map[string]
 	return
 }
 
-func ReadCsv(reader bufio.Reader, ch chan string, logger *zap.Logger) {
+func ReadCsv(reader bufio.Reader, ch chan string, logger *zap.Logger, ctx context.Context) {
 	for {
 		line, _, err := reader.ReadLine()
 		if err == io.EOF {
@@ -127,4 +132,5 @@ func ReadCsv(reader bufio.Reader, ch chan string, logger *zap.Logger) {
 		}
 		ch <- string(line)
 	}
+	ctx.Done()
 }
