@@ -42,7 +42,7 @@ func main() {
 		panic(err.Error())
 	}
 
-	config, err := parse.Parse(configFile)
+	config, err := parse.ConfigParse(configFile)
 	if err != nil {
 		panic(err.Error())
 	}
@@ -102,7 +102,7 @@ func main() {
 	wg.Wait()
 }
 func worker(Header []string, Query []string, ch <-chan string, Querylength int, FieldPos map[string]int) {
-	parse.ParseLine(Header, Query, LineChan, Querylength, FieldPos)
+	parse.LineParse(Header, Query, LineChan, Querylength, FieldPos)
 	wg.Done()
 }
 func GetFieldTypes(Header []string, FirstDataLine []string, IsString map[string]bool) {
