@@ -5,6 +5,7 @@ import (
 	"sync"
 	"testing"
 	"time"
+	"fmt"
 )
 
 const (
@@ -34,15 +35,21 @@ func TestCompareValues(t *testing.T) {
 		go func() {
 			b := make([]rune, rand.Intn(100))
 			a := make([]rune, rand.Intn(100))
+			c := fmt.Sprint(rand.Intn(10000))
+			d := fmt.Sprint(rand.Intn(10000))
 			for index := range b {
 				b[index] = letterRunes[rand.Intn(len(letterRunes))]
 			}
 			for index := range a {
 				a[index] = letterRunes[rand.Intn(len(letterRunes))]
 			}
-			res := CompareValues(string(a), string(b), "=")
-			if res == true {
+			resString := CompareValues(string(a), string(b), "=")
+			resInt := CompareValues(c, d, "=")
+			if resString == true  {
 				t.Errorf("gets true, wants false, values: %s = %s", string(a), string(b))
+			}
+			if resInt == true {
+			    t.Errorf("gets true, wants false, values: %s = %s", c, d)
 			}
 			wg.Done()
 		}()
