@@ -9,7 +9,7 @@ on:
 jobs:
 
   build:
-    name: Build and lint
+    name: Build and test/vet
     runs-on: ubuntu-latest
     steps:
 
@@ -32,6 +32,8 @@ jobs:
       run: cd csv-parser/ && go build -v -o app main.go
     - name: test
       run: cd csv-parser/ && go test -v . && go test -v parse/*
+    - name: vet
+      run: find csv-parser/  -iname "*.go" | xargs -I {} go vet {}
   super-lint:
     name: Lint source code
     runs-on: ubuntu-latest
