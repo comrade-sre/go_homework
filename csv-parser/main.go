@@ -82,12 +82,12 @@ func main() {
 	Header = (strings.Split(string(RawHeader), ","))
 	FirstDataLine := strings.Split(string(FirstDataLineRaw), ",")
 	GetFieldTypes(Header, FirstDataLine, IsString)
-	if err = check.CheckQuerySyntax(Header, Query, Querylength, FieldPos); err != nil {
+	if err = check.QuerySyntax(Header, Query, Querylength, FieldPos); err != nil {
 		loggerErr.Error(err.Error())
 		fmt.Fprintln(os.Stderr, err.Error())
 		os.Exit(1)
 	}
-	if err = check.CheckQueryTypes(IsString, Query, Querylength); err != nil {
+	if err = check.QueryTypes(IsString, Query, Querylength); err != nil {
 		loggerErr.Error(err.Error())
 		fmt.Fprintln(os.Stderr, err.Error())
 		os.Exit(1)

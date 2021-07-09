@@ -32,7 +32,7 @@ func ConvertTime(value string) (time.Time, error) {
 
 }
 
-func CheckQueryTypes(IsString map[string]bool, Query []string, Querylength int) (err error) {
+func QueryTypes(IsString map[string]bool, Query []string, Querylength int) (err error) {
 	for i := 0; i < Querylength; i += 4 {
 		IsHeaderString := IsString[Query[i]]
 		value := i + 2
@@ -51,7 +51,7 @@ func CheckQueryTypes(IsString map[string]bool, Query []string, Querylength int) 
 	return nil
 }
 
-func CheckHeader(Header []string, column string) (index int, err error) {
+func HeaderCheck(Header []string, column string) (index int, err error) {
 	for index, value := range Header {
 		if value == column {
 			return index, nil
@@ -60,7 +60,7 @@ func CheckHeader(Header []string, column string) (index int, err error) {
 	return -1, fmt.Errorf("such column not found: %s", column)
 
 }
-func CheckQuerySyntax(Header []string, Query []string, Querylength int, FieldPos map[string]int) (err error) {
+func QuerySyntax(Header []string, Query []string, Querylength int, FieldPos map[string]int) (err error) {
 	HeaderLength := len(Header)
 	LogOpMax := HeaderLength - 1
 	QearyMax := (HeaderLength * 3) + LogOpMax
@@ -70,7 +70,7 @@ func CheckQuerySyntax(Header []string, Query []string, Querylength int, FieldPos
 
 	}
 	for i := 0; i < Querylength; i += 4 {
-		index, err := CheckHeader(Header, Query[i])
+		index, err := HeaderCheck(Header, Query[i])
 		if err != nil {
 			return err
 		}
