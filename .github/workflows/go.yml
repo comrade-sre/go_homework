@@ -31,9 +31,9 @@ jobs:
     - name: build 
       run:  cd csv-parser/ && make build
     - name: test
-      run: make test
+      run: cd csv-parser/ && make test
     - name: vet
-      run: make vet
+      run: cd csv-parser/ && make vet
   super-lint:
     name: Lint source code
     runs-on: ubuntu-latest
