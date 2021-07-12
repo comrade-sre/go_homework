@@ -22,7 +22,7 @@ const (
 )
 
 var (
-	GitCommit string
+	GitCommit     string
 	config        = flag.String("c", "./config.yaml", "path to the configuration file")
 	Header        []string
 	IsString      = make(map[string]bool)
