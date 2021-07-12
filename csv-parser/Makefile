@@ -3,4 +3,4 @@ build:
 test:
 	go test -v . && go test -v parse/*
 vet:
-	go vet *.go
+	go vet *.go && go vet log/* && go vet parse/* && go vet check/*

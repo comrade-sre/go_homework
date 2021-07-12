@@ -29,11 +29,11 @@ jobs:
             dep ensure
         fi
     - name: build 
-      run: cd csv-parser/ && go build -v -o app main.go
+      run: make buil
     - name: test
-      run: cd csv-parser/ && go test -v . && go test -v parse/*
+      run: make test
     - name: vet
-      run: cd csv-parser/ && go vet *.go && go vet parse/* && go vet log/* && go vet check/*
+      run: make vet
   super-lint:
     name: Lint source code
     runs-on: ubuntu-latest
