@@ -22,6 +22,7 @@ const (
 )
 
 var (
+	GitCommit string
 	config        = flag.String("c", "./config.yaml", "path to the configuration file")
 	Header        []string
 	IsString      = make(map[string]bool)
@@ -58,6 +59,7 @@ func main() {
 	defer loggerErr.Sync()
 	logger.Info("Query " + strings.Join(Query, " ") + " received")
 	fmt.Println(os.Args[0])
+	fmt.Println(GitCommit)
 	csv, err := os.Open(config.CSVPATH)
 	defer csv.Close()
 	if err != nil {
