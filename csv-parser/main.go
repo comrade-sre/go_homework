@@ -11,9 +11,11 @@ import (
 	"go.uber.org/zap"
 	"io"
 	"os"
+	"os/signal"
 	"strconv"
 	"strings"
 	"sync"
+	"syscall"
 	"time"
 )
 
@@ -31,12 +33,21 @@ var (
 	FieldPos      = make(map[string]int)
 	wg            = sync.WaitGroup{}
 	ctx           = context.Background()
+	signalChan    = make(chan os.Signal)
 )
 
 func main() {
 	flag.Parse()
 	Query := flag.Args()
 	Querylength := len(Query)
+	signal.Notify(signalChan, syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
+	go func() {
+		for sig := range signalChan {
+			fmt.Fprintf(os.Stderr, "Got signal %s", sig.String())
+			os.Exit(1)
+		}
+	}()
+	defer close(signalChan)
 	configFile, err := os.Open(*config)
 	defer configFile.Close()
 	if err != nil {
@@ -124,7 +135,6 @@ func ReadCsv(reader bufio.Reader, ch chan string, logger *zap.Logger, ctx contex
 	for {
 		select {
 		case <-ctx.Done():
-
 			return
 		default:
 		}
