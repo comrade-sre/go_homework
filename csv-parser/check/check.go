@@ -62,6 +62,9 @@ func HeaderCheck(Header []string, column string) (index int, err error) {
 }
 func QuerySyntax(Header []string, Query []string, Querylength int, FieldPos map[string]int) (err error) {
 	HeaderLength := len(Header)
+	if Querylength < 3 {
+		return fmt.Errorf("Query is too short")
+	}
 	LogOpMax := HeaderLength - 1
 	QearyMax := (HeaderLength * 3) + LogOpMax
 
