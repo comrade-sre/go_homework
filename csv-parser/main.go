@@ -33,7 +33,7 @@ var (
 	FieldPos      = make(map[string]int)
 	wg            = sync.WaitGroup{}
 	ctx           = context.Background()
-	signalChan    = make(chan os.Signal)
+	signalChan    = make(chan os.Signal, 1)
 )
 
 func main() {
