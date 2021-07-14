@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"go.uber.org/zap"
 	"math/rand"
+	"os"
 	"runtime"
 	"testing"
 	"time"
@@ -36,6 +37,11 @@ func RandBytes(n int) []byte {
 		b[i] = letterBytes[rand.Intn(len(letterBytes))]
 	}
 	return b
+}
+func TestMain(m *testing.M) {
+	st := m.Run()
+	os.Exit(st)
+
 }
 func TestReadCsv(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
