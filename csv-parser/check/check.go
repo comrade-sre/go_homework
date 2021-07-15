@@ -53,7 +53,7 @@ func QueryTypes(IsString map[string]bool, Query []string, Querylength int) (err 
 
 func HeaderCheck(Header []string, column string) (index int, err error) {
 	for index, value := range Header {
-		if value == column {
+		if strings.ToLower(value) == strings.ToLower(column) {
 			return index, nil
 		}
 	}

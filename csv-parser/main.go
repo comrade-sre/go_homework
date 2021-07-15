@@ -33,27 +33,26 @@ var (
 	FieldPos      = make(map[string]int)
 	wg            = sync.WaitGroup{}
 	ctx           = context.Background()
-	signalChan    = make(chan os.Signal, 1)
 )
-
+func watchSignals(cancel context.CancelFunc, logger zap.Logger) {
+	osSignalChan := make(chan os.Signal, 1)
+	signal.Notify(osSignalChan,syscall.SIGINT,
+		syscall.SIGTERM,syscall.SIGHUP,syscall.SIGQUIT)
+	sig := <-osSignalChan
+	logger.Error(sig.String())
+	fmt.Fprintf(os.Stderr, sig.String())
+	cancel()
+	os.Exit(1)
+}
 func main() {
 	flag.Parse()
 	Query := flag.Args()
 	Querylength := len(Query)
-	signal.Notify(signalChan, syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
-	go func() {
-		for sig := range signalChan {
-			fmt.Fprintf(os.Stderr, "Got signal %s", sig.String())
-			os.Exit(1)
-		}
-	}()
-	defer close(signalChan)
 	configFile, err := os.Open(*config)
 	defer configFile.Close()
 	if err != nil {
 		panic(err.Error())
 	}
-
 	config, err := parse.ConfigParse(configFile)
 	if err != nil {
 		panic(err.Error())
@@ -68,6 +67,9 @@ func main() {
 		panic(err.Error())
 	}
 	defer loggerErr.Sync()
+	_, sigcancel := context.WithCancel(context.Background())
+	go watchSignals(sigcancel, *loggerErr)
+	defer sigcancel()
 	logger.Info("Query " + strings.Join(Query, " ") + " received")
 	fmt.Println(os.Args[0])
 	fmt.Println(GitCommit)
