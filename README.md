@@ -1,2 +1,3 @@
 # go_homework
-repository for homework
+repository for homework.
+
