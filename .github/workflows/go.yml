@@ -9,7 +9,7 @@ on:
 jobs:
 
   build:
-    name: Build and lint
+    name: Build and test/vet
     runs-on: ubuntu-latest
     steps:
 
@@ -29,13 +29,11 @@ jobs:
             dep ensure
         fi
     - name: build 
-      run: go build -v -o app web/web.go 
-    - name: test fib
-      run: cd fibonacci/ && go test -v .
-    - name: test search simple
-      run: cd searchSimple/ && go test -v .
-    - name: benchmark for sort
-      run: cd sort/ && go test -v -bench=. -benchmem 
+      run:  cd csv-parser/ && make build
+    - name: test
+      run: cd csv-parser/ && make test
+    - name: vet
+      run: cd csv-parser/ && make vet
   super-lint:
     name: Lint source code
     runs-on: ubuntu-latest
