@@ -33,7 +33,6 @@ func main() {
 			continue
 		}
 		go handleConn(conn, messageChan)
-		fmt.Println("conn processing finished")
 	}
 }
 
