@@ -31,7 +31,7 @@ func main() {
 		go handleConn(conn)
 	}
 }
-	func broadcaster() {
+func broadcaster() {
 	clients := make(map[client]bool)
 	for {
 		select {
@@ -50,12 +50,12 @@ func main() {
 	}
 }
 
-
 func handleConn(conn net.Conn) {
 	ch := make(chan string)
-	var buf []byte
+	buf := make([]byte, 128)
 	_, err := conn.Read(buf)
 	nickName := string(buf)
+	fmt.Println(nickName)
 	if err != nil {
 		conn.Close()
 		return
@@ -77,4 +77,3 @@ func clientWriter(conn net.Conn, ch <-chan string) {
 		fmt.Fprintln(conn, msg)
 	}
 }
-

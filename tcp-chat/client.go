@@ -17,7 +17,7 @@ func main() {
 		nickName = os.Args[1]
 	}
 
-	fmt.Fprintln(conn, nickName)
+	fmt.Fprintf(conn, nickName)
 	if err != nil {
 		log.Fatal(err)
 	}
