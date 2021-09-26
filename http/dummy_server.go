@@ -18,6 +18,7 @@ type Employee struct {
 	Salary float32 `json:"salary" xml:"salary"`
 }
 type UploadHandler struct {
+	HostAddr string
 	UploadDir string
 }
 
@@ -76,7 +77,9 @@ func (h *UploadHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Unable to save file", http.StatusInternalServerError)
 		return
 	}
-	fmt.Fprintf(w, "File %s successfully uploaded", header.Filename)
+	h.HostAddr = "http://" + r.Host + ":8080"
+	fileLink :=  h.HostAddr+ "/" + header.Filename
+	fmt.Fprintln(w, fileLink)
 }
 
 func main() {
@@ -91,5 +94,13 @@ func main() {
 		ReadTimeout:  10 * time.Second,
 		WriteTimeout: 10 * time.Second,
 	}
-	srv.ListenAndServe()
+	go srv.ListenAndServe()
+	dirToServe := http.Dir(uploadHandler.UploadDir)
+	fs := &http.Server{
+		Addr: ":8080",
+		Handler: http.FileServer(dirToServe),
+		ReadTimeout: 10 * time.Second,
+		WriteTimeout: 10 * time.Second,
+	}
+	fs.ListenAndServe()
 }
