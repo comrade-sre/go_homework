@@ -21,6 +21,9 @@ type UploadHandler struct {
 	HostAddr string
 	UploadDir string
 }
+type GetHandler struct {
+	UploadDir string
+}
 
 func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
@@ -56,6 +59,16 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			employee.Salary,
 		)
 
+	}
+}
+func (h *GetHandler) ServeHTTP(w http.ResponseWriter, response *http.Request) {
+	files, err := ioutil.ReadDir(h.UploadDir)
+	if err != nil {
+		fmt.Fprintf(w, "unable to read dir: %v", err )
+	}
+	return
+	for _, file := range files {
+		fmt.Fprint(w, "%s: %v",file.Name(), file.Size()  )
 	}
 }
 func (h *UploadHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -102,5 +115,9 @@ func main() {
 		ReadTimeout: 10 * time.Second,
 		WriteTimeout: 10 * time.Second,
 	}
+	gethandler := &GetHandler{
+		UploadDir: uploadHandler.UploadDir,
+	}
+	http.Handle("/ls", gethandler)
 	fs.ListenAndServe()
 }
