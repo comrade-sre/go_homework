@@ -127,12 +127,13 @@ func main() {
 	gethandler := &GetHandler{
 		UploadDir: uploadHandler.UploadDir,
 	}
-	//dirToServe := http.Dir(uploadHandler.UploadDir)
+	dirToServe := http.Dir(uploadHandler.UploadDir)
 	filemux := http.NewServeMux()
+	filemux.Handle("/", http.FileServer(dirToServe))
 	filemux.Handle("/ls", gethandler)
 	fs := &http.Server{
 		Addr: ":8080",
-		Handler: filemux,//http.FileServer(dirToServe),
+		Handler: filemux,
 		ReadTimeout: 10 * time.Second,
 		WriteTimeout: 10 * time.Second,
 	}
