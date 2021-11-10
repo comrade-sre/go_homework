@@ -14,4 +14,4 @@
 # Dependency directories (remove the comment below to include it)
 # vendor/
 system.log
-./http/upload/*
+http/upload/*

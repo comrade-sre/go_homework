@@ -7,6 +7,8 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strings"
+	"sync"
 	"time"
 )
 
@@ -61,14 +63,20 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	}
 }
-func (h *GetHandler) ServeHTTP(w http.ResponseWriter, response *http.Request) {
-	files, err := ioutil.ReadDir(h.UploadDir)
+func (h *GetHandler) ServeHTTP(w http.ResponseWriter, _ *http.Request) {
+	files, err := ioutil.ReadDir("./"+ h.UploadDir)
 	if err != nil {
 		fmt.Fprintf(w, "unable to read dir: %v", err )
+		return
 	}
-	return
 	for _, file := range files {
-		fmt.Fprint(w, "%s: %v",file.Name(), file.Size()  )
+		fileSlice := strings.Split(file.Name(), ".")
+		if len(fileSlice) > 1 {
+			extension := fileSlice[len(fileSlice)-1]
+			fmt.Fprintf(w, "name: %s\t type: %s\t size: %d\n",fileSlice[0], extension, file.Size())
+		} else {
+			fmt.Fprintf(w, "name: %s\t type: no type\t size: %d\n",file.Name(), file.Size())
+		}
 	}
 }
 func (h *UploadHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -96,28 +104,41 @@ func (h *UploadHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	wg := new(sync.WaitGroup)
+	wg.Add(2)
+	mux := http.NewServeMux()
 	handler := &Handler{}
 	uploadHandler := &UploadHandler{
 		UploadDir: "upload",
 	}
-	http.Handle("/upload", uploadHandler)
-	http.Handle("/", handler)
+	mux.Handle("/upload", uploadHandler)
+	mux.Handle("/", handler)
 	srv := &http.Server{
 		Addr:         ":80",
+		Handler: mux,
 		ReadTimeout:  10 * time.Second,
 		WriteTimeout: 10 * time.Second,
 	}
-	go srv.ListenAndServe()
-	dirToServe := http.Dir(uploadHandler.UploadDir)
-	fs := &http.Server{
-		Addr: ":8080",
-		Handler: http.FileServer(dirToServe),
-		ReadTimeout: 10 * time.Second,
-		WriteTimeout: 10 * time.Second,
-	}
+
+	go func() {
+		log.Fatal(srv.ListenAndServe())
+		wg.Done()
+	}()
 	gethandler := &GetHandler{
 		UploadDir: uploadHandler.UploadDir,
 	}
-	http.Handle("/ls", gethandler)
-	fs.ListenAndServe()
+	//dirToServe := http.Dir(uploadHandler.UploadDir)
+	filemux := http.NewServeMux()
+	filemux.Handle("/ls", gethandler)
+	fs := &http.Server{
+		Addr: ":8080",
+		Handler: filemux,//http.FileServer(dirToServe),
+		ReadTimeout: 10 * time.Second,
+		WriteTimeout: 10 * time.Second,
+	}
+	go func() {
+		log.Fatal(fs.ListenAndServe())
+		wg.Done()
+	}()
+	wg.Wait()
 }
