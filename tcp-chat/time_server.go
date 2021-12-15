@@ -28,6 +28,7 @@ func main() {
 				messageChan <- message
 			}
 		}
+		close(messageChan)
 	}()
 	for {
 		conn, err := listener.Accept()
@@ -41,7 +42,6 @@ func main() {
 
 func handleConn(c net.Conn, ch <-chan string) {
 	defer c.Close()
-	defer close(messageChan)
 	for {
 		select {
 		case input := <-ch:
