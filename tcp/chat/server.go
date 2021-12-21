@@ -20,12 +20,11 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-
 	go broadcaster()
 	for {
 		conn, err := listener.Accept()
 		if err != nil {
-			log.Print(err)
+			log.Println(err)
 			continue
 		}
 		go handleConn(conn)
@@ -51,15 +50,15 @@ func broadcaster() {
 }
 
 func handleConn(conn net.Conn) {
+	defer conn.Close()
 	ch := make(chan string)
 	buf := make([]byte, 128)
 	_, err := conn.Read(buf)
-	nickName := string(buf)
-	fmt.Println(nickName)
 	if err != nil {
-		conn.Close()
 		return
 	}
+	nickName := string(buf)
+	fmt.Println(nickName)
 	go clientWriter(conn, ch)
 	ch <- "You are " + nickName
 	messages <- nickName + " has arrived"
@@ -70,7 +69,7 @@ func handleConn(conn net.Conn) {
 	}
 	leaving <- ch
 	messages <- nickName + " has left"
-	conn.Close()
+
 }
 func clientWriter(conn net.Conn, ch <-chan string) {
 	for msg := range ch {
