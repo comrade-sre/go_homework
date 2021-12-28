@@ -244,30 +244,23 @@ paths:
           content: {}
       security:
         - api_key: []
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
+    get:
+      summary: Get orgers
+      operationId: GetOrders
+      parameters:
+        - name: orderId
+          in: path
+          description:  Order Id for get
+          required: true
+          schema:
+            $ref: "#/components/schemas/Order"
+      responses:
+        200:
+          description: succesful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Order"
+        404:
+           description: order not found
+           content: {}
